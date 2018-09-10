@@ -27,12 +27,12 @@ cd VexTurningPoint2019
 make
 ```
 
-# Uploading your code
+## Uploading your code
 ```shell
 pros flash
 ```
 
-# Open serial connection with cortex
+## Open serial connection with cortex
 ```shell
 pros terminal
 ```
