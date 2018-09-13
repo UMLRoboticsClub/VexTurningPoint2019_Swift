@@ -1,6 +1,6 @@
 # VexTurningPoint2019
 
-UML's Vex Turning Point code
+UML Robotics Club's Vex Turning Point code
 
 
 ## Building
