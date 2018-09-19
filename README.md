@@ -12,8 +12,11 @@ You need:
 * python3
 * python3-pip
 
+Install pros-cli3
 ```shell
-pip install pros-cli
+git clone https://github.com/purduesigbots/pros-cli3.git
+cd pros-cli3
+sudo pip install -e .
 ```
 
 Clone the repo
