@@ -32,7 +32,7 @@ make
 
 ## Uploading your code
 ```shell
-prosv5 flash
+prosv5 upload
 ```
 
 ## Open serial connection with cortex
