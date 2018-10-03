@@ -12,6 +12,12 @@ You need:
 * python3
 * python3-pip
 
+Install the arm cross compiler
+```shell
+#for debian based distros
+sudo apt-get install arm-none-eabi-gcc
+```
+
 Install pros-cli3
 ```shell
 git clone https://github.com/purduesigbots/pros-cli3.git
