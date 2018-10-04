@@ -15,7 +15,7 @@ You need:
 Install the arm cross compiler
 ```shell
 #for debian based distros
-sudo apt-get install arm-none-eabi-gcc
+sudo apt-get install gcc-arm-none-eabi
 ```
 
 Install pros-cli3
