@@ -64,6 +64,9 @@ quick: $(OUTBIN)
 
 all: clean $(OUTBIN)
 
+upload:
+	prosv5 upload
+
 clean:
 	@echo Cleaning project
 	-$Drm -rf $(BINDIR)
