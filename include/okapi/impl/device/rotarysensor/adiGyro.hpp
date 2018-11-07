@@ -8,31 +8,37 @@
 #pragma once
 
 #include "api.h"
+#include "okapi/api/control/controllerInput.hpp"
 #include "okapi/api/device/rotarysensor/continuousRotarySensor.hpp"
 
 namespace okapi {
-class IntegratedEncoder : public ContinuousRotarySensor {
+class ADIGyro : public ContinuousRotarySensor {
   public:
   /**
-   * Integrated motor encoder. Uses the encoder inside the V5 motor.
+   * A gyroscope on the given ADI port. If the port has not previously been configured as a gyro,
+   * then the constructor will block for 1 second for calibration. The gyro measures in tenths of a
+   * degree, so there are 3600 measurement points per revolution.
    *
-   * @param imotor motor
+   * @param iport the ADI port number
+   * @param imultiplier a value multiplied by the gyro heading value
    */
-  IntegratedEncoder(pros::Motor imotor);
+  ADIGyro(std::uint8_t iport, double imultiplier = 1);
+
+  virtual ~ADIGyro();
 
   /**
    * Get the current sensor value.
    *
    * @return the current sensor value, or ``PROS_ERR`` on a failure.
    */
-  virtual double get() const override;
+  double get() const override;
 
   /**
    * Reset the sensor to zero.
    *
    * @return 1 on success, PROS_ERR on fail
    */
-  virtual std::int32_t reset() override;
+  std::int32_t reset() override;
 
   /**
    * Get the sensor value for use in a control loop. This method might be automatically called in
@@ -40,9 +46,9 @@ class IntegratedEncoder : public ContinuousRotarySensor {
    *
    * @return the current sensor value, or ``PROS_ERR`` on a failure.
    */
-  virtual double controllerGet() override;
+  double controllerGet() override;
 
   protected:
-  pros::Motor motor;
+  pros::ADIGyro gyro;
 };
 } // namespace okapi

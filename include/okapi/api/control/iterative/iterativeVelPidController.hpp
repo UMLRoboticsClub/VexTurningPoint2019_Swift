@@ -5,8 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _OKAPI_ITERATIVEVELPIDCONTROLLER_HPP_
-#define _OKAPI_ITERATIVEVELPIDCONTROLLER_HPP_
+#pragma once
 
 #include "okapi/api/control/iterative/iterativeVelocityController.hpp"
 #include "okapi/api/control/util/settledUtil.hpp"
@@ -54,6 +53,14 @@ class IterativeVelPIDController : public IterativeVelocityController<double, dou
   void setTarget(double itarget) override;
 
   /**
+   * Writes the value of the controller output. This method might be automatically called in another
+   * thread by the controller. The range of input values is expected to be [-1, 1].
+   *
+   * @param ivalue the controller's output in the range [-1, 1]
+   */
+  void controllerSet(double ivalue) override;
+
+  /**
    * Gets the last set target, or the default target if none was set.
    *
    * @return the last target
@@ -64,6 +71,20 @@ class IterativeVelPIDController : public IterativeVelocityController<double, dou
    * Returns the last calculated output of the controller.
    */
   double getOutput() const override;
+
+  /**
+   * Get the upper output bound.
+   *
+   * @return  the upper output bound
+   */
+  double getMaxOutput() override;
+
+  /**
+   * Get the lower output bound.
+   *
+   * @return the lower output bound
+   */
+  double getMinOutput() override;
 
   /**
    * Returns the last error of the controller.
@@ -96,8 +117,8 @@ class IterativeVelPIDController : public IterativeVelocityController<double, dou
   void setOutputLimits(double imax, double imin) override;
 
   /**
-   * Resets the controller so it can start from 0 again properly. Keeps configuration from
-   * before.
+   * Resets the controller's internal state so it is similar to when it was first initialized, while
+   * keeping any user-configured information.
    */
   void reset() override;
 
@@ -162,15 +183,15 @@ class IterativeVelPIDController : public IterativeVelocityController<double, dou
   protected:
   Logger *logger;
   double kP, kD, kF, kSF;
-  QTime sampleTime = 10_ms;
-  double error = 0;
-  double derivative = 0;
-  double target = 0;
-  double outputSum = 0;
-  double output = 0;
-  double outputMax = 1;
-  double outputMin = -1;
-  bool isOn = true;
+  QTime sampleTime{10_ms};
+  double error{0};
+  double derivative{0};
+  double target{0};
+  double outputSum{0};
+  double output{0};
+  double outputMax{1};
+  double outputMin{-1};
+  bool controllerIsDisabled{false};
 
   std::unique_ptr<VelMath> velMath;
   std::unique_ptr<Filter> derivativeFilter;
@@ -178,5 +199,3 @@ class IterativeVelPIDController : public IterativeVelocityController<double, dou
   std::unique_ptr<SettledUtil> settledUtil;
 };
 } // namespace okapi
-
-#endif

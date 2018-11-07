@@ -5,8 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _OKAPI_CHASSISCONTROLLER_HPP_
-#define _OKAPI_CHASSISCONTROLLER_HPP_
+#pragma once
 
 #include "okapi/api/chassis/controller/chassisScales.hpp"
 #include "okapi/api/chassis/model/chassisModel.hpp"
@@ -26,7 +25,9 @@ class ChassisController : public ChassisModel {
    *
    * @param imodel underlying ChassisModel
    */
-  explicit ChassisController(std::shared_ptr<ChassisModel> imodel);
+  explicit ChassisController(const std::shared_ptr<ChassisModel> &imodel,
+                             double imaxVelocity,
+                             double imaxVoltage = 12000);
 
   ~ChassisController() override;
 
@@ -87,6 +88,13 @@ class ChassisController : public ChassisModel {
   virtual void turnAngleAsync(double idegTarget) = 0;
 
   /**
+   * Sets whether turns should be mirrored.
+   *
+   * @param ishouldMirror whether turns should be mirrored
+   */
+  virtual void setTurnsMirrored(bool ishouldMirror);
+
+  /**
    * Delays until the currently executing movement completes.
    */
   virtual void waitUntilSettled() = 0;
@@ -101,13 +109,13 @@ class ChassisController : public ChassisModel {
   /**
    * Drive the robot in an arc (using open-loop control).
    * The algorithm is (approximately):
-   *   leftPower = ySpeed + zRotation
-   *   rightPower = ySpeed - zRotation
+   *   leftPower = forwardSpeed + yaw
+   *   rightPower = forwardSpeed - yaw
    *
-   * @param iySpeed speed on y axis (forward)
-   * @param izRotation speed around z axis (up)
+   * @param iforwardSpeed speed in the forward direction
+   * @param iyaw speed around the vertical axis
    */
-  void driveVector(double iySpeed, double izRotation) const override;
+  void driveVector(double iforwardSpeed, double iyaw) const override;
 
   /**
    * Turn the robot clockwise (using open-loop control).
@@ -133,11 +141,11 @@ class ChassisController : public ChassisModel {
   /**
    * Drive the robot with an arcade drive layout.
    *
-   * @param iySpeed speed on y axis (forward)
-   * @param izRotation speed around z axis (up)
+   * @param iforwardSpeed speed in the forward direction
+   * @param iyaw speed around the vertical axis
    * @param ithreshold deadband on joystick values
    */
-  void arcade(double iySpeed, double izRotation, double ithreshold = 0) const override;
+  void arcade(double iforwardSpeed, double iyaw, double ithreshold = 0) const override;
 
   /**
    * Power the left side motors.
@@ -249,6 +257,20 @@ class ChassisController : public ChassisModel {
                      double iloopSpeed) const override;
 
   /**
+   * Sets a new maximum velocity in RPM [0-600].
+   *
+   * @param imaxVelocity the new maximum velocity
+   */
+  void setMaxVelocity(double imaxVelocity) override;
+
+  /**
+   * Sets a new maximum voltage in mV [0-12000].
+   *
+   * @param imaxVoltage the new maximum voltage
+   */
+  void setMaxVoltage(double imaxVoltage) override;
+
+  /**
    * Get the underlying ChassisModel. This should be used sparingly and carefully because it can
    * result in multiple owners writing to the same set of motors.
    */
@@ -259,9 +281,13 @@ class ChassisController : public ChassisModel {
    */
   virtual ChassisScales getChassisScales() const = 0;
 
+  /**
+   * Get the GearsetRatioPair.
+   */
+  virtual AbstractMotor::GearsetRatioPair getGearsetRatioPair() const = 0;
+
   protected:
   std::shared_ptr<ChassisModel> model;
+  bool normalTurns{true};
 };
 } // namespace okapi
-
-#endif

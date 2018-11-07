@@ -5,8 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _OKAPI_TIMEUTIL_HPP_
-#define _OKAPI_TIMEUTIL_HPP_
+#pragma once
 
 #include "okapi/api/control/util/settledUtil.hpp"
 #include "okapi/api/util/abstractRate.hpp"
@@ -20,9 +19,9 @@ namespace okapi {
  */
 class TimeUtil {
   public:
-  TimeUtil(const Supplier<std::unique_ptr<AbstractTimer>> &timerSupplier,
-           const Supplier<std::unique_ptr<AbstractRate>> &rateSupplier,
-           const Supplier<std::unique_ptr<SettledUtil>> &settledUtilSupplier);
+  TimeUtil(const Supplier<std::unique_ptr<AbstractTimer>> &itimerSupplier,
+           const Supplier<std::unique_ptr<AbstractRate>> &irateSupplier,
+           const Supplier<std::unique_ptr<SettledUtil>> &isettledUtilSupplier);
 
   std::unique_ptr<AbstractTimer> getTimer() const;
 
@@ -42,5 +41,3 @@ class TimeUtil {
   Supplier<std::unique_ptr<SettledUtil>> settledUtilSupplier;
 };
 } // namespace okapi
-
-#endif

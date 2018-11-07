@@ -5,12 +5,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _OKAPI_ASYNCWRAPPER_HPP_
-#define _OKAPI_ASYNCWRAPPER_HPP_
+#pragma once
 
 #include "okapi/api/control/async/asyncController.hpp"
 #include "okapi/api/control/controllerInput.hpp"
-#include "okapi/api/control/controllerOutput.hpp"
 #include "okapi/api/control/iterative/iterativeController.hpp"
 #include "okapi/api/control/util/settledUtil.hpp"
 #include "okapi/api/coreProsAPI.hpp"
@@ -36,8 +34,8 @@ class AsyncWrapper : virtual public AsyncController<Input, Output> {
    * @param isettledUtil used in waitUntilSettled
    * @param iscale the scale applied to the controller output
    */
-  AsyncWrapper(std::shared_ptr<ControllerInput<Input>> iinput,
-               std::shared_ptr<ControllerOutput<Output>> ioutput,
+  AsyncWrapper(const std::shared_ptr<ControllerInput<Input>> &iinput,
+               const std::shared_ptr<ControllerOutput<Output>> &ioutput,
                std::unique_ptr<IterativeController<Input, Output>> icontroller,
                const Supplier<std::unique_ptr<AbstractRate>> &irateSupplier)
     : logger(Logger::instance()),
@@ -55,12 +53,12 @@ class AsyncWrapper : virtual public AsyncController<Input, Output> {
       controller(std::move(other.controller)),
       loopRate(std::move(other.loopRate)),
       settledRate(std::move(other.settledRate)),
-      dtorCalled(other.dtorCalled.load(std::memory_order::memory_order_relaxed)),
+      dtorCalled(other.dtorCalled.load(std::memory_order_acquire)),
       task(other.task) {
   }
 
   ~AsyncWrapper() override {
-    dtorCalled.store(true, std::memory_order::memory_order_relaxed);
+    dtorCalled.store(true, std::memory_order_release);
     delete task;
   }
 
@@ -75,6 +73,16 @@ class AsyncWrapper : virtual public AsyncController<Input, Output> {
   }
 
   /**
+   * Writes the value of the controller output. This method might be automatically called in another
+   * thread by the controller.
+   *
+   * @param ivalue the controller's output
+   */
+  void controllerSet(Input ivalue) override {
+    controller->controllerSet(ivalue);
+  }
+
+  /**
    * Gets the last set target, or the default target if none was set.
    *
    * @return the last target
@@ -84,7 +92,7 @@ class AsyncWrapper : virtual public AsyncController<Input, Output> {
   }
 
   /**
-   * Returns the last calculated output of the controller. Default is 0.
+   * Returns the last calculated output of the controller.
    */
   Output getOutput() const {
     return controller->getOutput();
@@ -110,7 +118,7 @@ class AsyncWrapper : virtual public AsyncController<Input, Output> {
   }
 
   /**
-   * Set time between loops. Default does nothing.
+   * Set time between loops.
    *
    * @param isampleTime time between loops
    */
@@ -119,7 +127,7 @@ class AsyncWrapper : virtual public AsyncController<Input, Output> {
   }
 
   /**
-   * Set controller output bounds. Default does nothing.
+   * Set controller output bounds.
    *
    * @param imax max output
    * @param imin min output
@@ -129,8 +137,26 @@ class AsyncWrapper : virtual public AsyncController<Input, Output> {
   }
 
   /**
-   * Resets the controller so it can start from 0 again properly. Keeps configuration from
-   * before.
+   * Get the upper output bound.
+   *
+   * @return  the upper output bound
+   */
+  Output getMaxOutput() {
+    return controller->getMaxOutput();
+  }
+
+  /**
+   * Get the lower output bound.
+   *
+   * @return the lower output bound
+   */
+  Output getMinOutput() {
+    return controller->getMinOutput();
+  }
+
+  /**
+   * Resets the controller's internal state so it is similar to when it was first initialized, while
+   * keeping any user-configured information.
    */
   void reset() override {
     logger->info("AsyncWrapper: Reset");
@@ -143,6 +169,7 @@ class AsyncWrapper : virtual public AsyncController<Input, Output> {
    * cause the controller to move to its last set target, unless it was reset in that time.
    */
   void flipDisable() override {
+    logger->info("AsyncWrapper: flipDisable " + std::to_string(!controller->isDisabled()));
     controller->flipDisable();
     resumeMovement();
   }
@@ -211,7 +238,7 @@ class AsyncWrapper : virtual public AsyncController<Input, Output> {
   }
 
   void loop() {
-    while (!dtorCalled.load(std::memory_order::memory_order_relaxed)) {
+    while (!dtorCalled.load(std::memory_order_acquire)) {
       if (!isDisabled()) {
         output->controllerSet(controller->step(input->controllerGet()));
       }
@@ -236,5 +263,3 @@ class AsyncWrapper : virtual public AsyncController<Input, Output> {
   }
 };
 } // namespace okapi
-
-#endif

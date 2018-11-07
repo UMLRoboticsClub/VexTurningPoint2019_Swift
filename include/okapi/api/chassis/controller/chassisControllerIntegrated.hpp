@@ -5,8 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _OKAPI_CHASSISCONTROLLERINTEGRATED_HPP_
-#define _OKAPI_CHASSISCONTROLLERINTEGRATED_HPP_
+#pragma once
 
 #include "okapi/api/chassis/controller/chassisController.hpp"
 #include "okapi/api/control/async/asyncPosIntegratedController.hpp"
@@ -28,7 +27,7 @@ class ChassisControllerIntegrated : public virtual ChassisController {
    */
   ChassisControllerIntegrated(
     const TimeUtil &itimeUtil,
-    std::shared_ptr<ChassisModel> imodel,
+    const std::shared_ptr<ChassisModel> &imodel,
     std::unique_ptr<AsyncPosIntegratedController> ileftController,
     std::unique_ptr<AsyncPosIntegratedController> irightController,
     AbstractMotor::GearsetRatioPair igearset = AbstractMotor::gearset::red,
@@ -101,9 +100,21 @@ class ChassisControllerIntegrated : public virtual ChassisController {
   void stop() override;
 
   /**
+   * Sets a new maximum velocity in RPM [0-600].
+   *
+   * @param imaxVelocity the new maximum velocity
+   */
+  void setMaxVelocity(double imaxVelocity) override;
+
+  /**
    * Get the ChassisScales.
    */
   ChassisScales getChassisScales() const override;
+
+  /**
+   * Get the GearsetRatioPair.
+   */
+  AbstractMotor::GearsetRatioPair getGearsetRatioPair() const override;
 
   protected:
   Logger *logger;
@@ -112,8 +123,6 @@ class ChassisControllerIntegrated : public virtual ChassisController {
   std::unique_ptr<AsyncPosIntegratedController> rightController;
   int lastTarget;
   ChassisScales scales;
-  const double gearRatio;
+  AbstractMotor::GearsetRatioPair gearsetRatioPair;
 };
 } // namespace okapi
-
-#endif

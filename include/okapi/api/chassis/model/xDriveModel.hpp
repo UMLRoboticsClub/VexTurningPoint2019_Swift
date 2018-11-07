@@ -5,8 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _OKAPI_XDRIVEMODEL_HPP_
-#define _OKAPI_XDRIVEMODEL_HPP_
+#pragma once
 
 #include "okapi/api/chassis/model/chassisModel.hpp"
 #include "okapi/api/device/motor/abstractMotor.hpp"
@@ -17,7 +16,7 @@ class XDriveModel : public ChassisModel {
   public:
   /**
    * Model for an x drive (wheels at 45 deg from a skid steer drive). When all motors are powered
-   * +127, the robot should move forward in a straight line.
+   * +100%, the robot should move forward in a straight line.
    *
    * This constructor infers the two sensors from the top left and top right motors (using the
    * integrated encoders).
@@ -27,16 +26,16 @@ class XDriveModel : public ChassisModel {
    * @param ibottomRightMotor bottom right motor
    * @param ibottomLeftMotor bottom left motor
    */
-  XDriveModel(std::shared_ptr<AbstractMotor> itopLeftMotor,
-              std::shared_ptr<AbstractMotor> itopRightMotor,
-              std::shared_ptr<AbstractMotor> ibottomRightMotor,
-              std::shared_ptr<AbstractMotor> ibottomLeftMotor,
-              double imaxVelocity = 127,
+  XDriveModel(const std::shared_ptr<AbstractMotor> &itopLeftMotor,
+              const std::shared_ptr<AbstractMotor> &itopRightMotor,
+              const std::shared_ptr<AbstractMotor> &ibottomRightMotor,
+              const std::shared_ptr<AbstractMotor> &ibottomLeftMotor,
+              double imaxVelocity,
               double imaxVoltage = 12000);
 
   /**
    * Model for an x drive (wheels at 45 deg from a skid steer drive). When all motors are powered
-   * +127, the robot should move forward in a straight line.
+   * +100%, the robot should move forward in a straight line.
    *
    * @param itopLeftMotor top left motor
    * @param itopRightMotor top right motor
@@ -45,13 +44,13 @@ class XDriveModel : public ChassisModel {
    * @param ileftEnc Left side encoder
    * @param irightEnc Right side encoder
    */
-  XDriveModel(std::shared_ptr<AbstractMotor> itopLeftMotor,
-              std::shared_ptr<AbstractMotor> itopRightMotor,
-              std::shared_ptr<AbstractMotor> ibottomRightMotor,
-              std::shared_ptr<AbstractMotor> ibottomLeftMotor,
-              std::shared_ptr<ContinuousRotarySensor> ileftEnc,
-              std::shared_ptr<ContinuousRotarySensor> irightEnc,
-              double imaxVelocity = 127,
+  XDriveModel(const std::shared_ptr<AbstractMotor> &itopLeftMotor,
+              const std::shared_ptr<AbstractMotor> &itopRightMotor,
+              const std::shared_ptr<AbstractMotor> &ibottomRightMotor,
+              const std::shared_ptr<AbstractMotor> &ibottomLeftMotor,
+              const std::shared_ptr<ContinuousRotarySensor> &ileftEnc,
+              const std::shared_ptr<ContinuousRotarySensor> &irightEnc,
+              double imaxVelocity,
               double imaxVoltage = 12000);
 
   /**
@@ -64,13 +63,13 @@ class XDriveModel : public ChassisModel {
   /**
    * Drive the robot in an arc (using open-loop control). Uses velocity mode.
    * The algorithm is (approximately):
-   *   leftPower = ySpeed + zRotation
-   *   rightPower = ySpeed - zRotation
+   *   leftPower = forwardSpeed + yaw
+   *   rightPower = forwardSpeed - yaw
    *
-   * @param iySpeed speed on y axis (forward)
-   * @param izRotation speed around z axis (up)
+   * @param iforwardSpeed speed in the forward direction
+   * @param iyaw speed around the vertical axis
    */
-  void driveVector(double iySpeed, double izRotation) const override;
+  void driveVector(double iforwardSpeed, double iyaw) const override;
 
   /**
    * Turn the robot clockwise (using open-loop control). Uses velocity mode.
@@ -96,22 +95,22 @@ class XDriveModel : public ChassisModel {
   /**
    * Drive the robot with an arcade drive layout. Uses voltage mode.
    *
-   * @param iySpeed speed on y axis (forward)
-   * @param izRotation speed around z axis (up)
+   * @param iforwardSpeed speed in the forward direction
+   * @param iyaw speed around the vertical axis
    * @param ithreshold deadband on joystick values
    */
-  void arcade(double iySpeed, double izRotation, double ithreshold = 0) const override;
+  void arcade(double iforwardSpeed, double iyaw, double ithreshold = 0) const override;
 
   /**
    * Drive the robot with an arcade drive layout. Uses voltage mode.
    *
-   * @param izSpeed speed on x axis (right)
-   * @param iySpeed speed on y axis (forward)
-   * @param izRotation speed around z axis (up)
+   * @param irightSpeed speed to the right
+   * @param iforwardSpeed speed in the forward direction
+   * @param iyaw speed around the vertical axis
    * @param ithreshold deadband on joystick values
    */
   virtual void
-  xArcade(double ixSpeed, double iySpeed, double izRotation, double ithreshold = 0) const;
+  xArcade(double irightSpeed, double iforwardSpeed, double iyaw, double ithreshold = 0) const;
 
   /**
    * Power the left side motors. Uses velocity mode.
@@ -261,9 +260,5 @@ class XDriveModel : public ChassisModel {
   std::shared_ptr<AbstractMotor> bottomLeftMotor;
   std::shared_ptr<ContinuousRotarySensor> leftSensor;
   std::shared_ptr<ContinuousRotarySensor> rightSensor;
-  const double maxVelocity;
-  const double maxVoltage;
 };
 } // namespace okapi
-
-#endif

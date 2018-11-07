@@ -11,8 +11,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _OKAPI_RQUANTITY_HPP_
-#define _OKAPI_RQUANTITY_HPP_
+#pragma once
 
 #include <ratio>
 
@@ -38,6 +37,10 @@ class RQuantity {
   constexpr RQuantity const &operator-=(const RQuantity &rhs) {
     value -= rhs.value;
     return *this;
+  }
+
+  constexpr RQuantity operator-() {
+    return RQuantity(value * -1);
   }
 
   // Returns the value of the quantity in multiples of the specified unit
@@ -97,6 +100,10 @@ template <typename M, typename L, typename T, typename A>
 constexpr RQuantity<M, L, T, A> operator*(const double &lhs, const RQuantity<M, L, T, A> &rhs) {
   return RQuantity<M, L, T, A>(lhs * rhs.getValue());
 }
+template <typename M, typename L, typename T, typename A>
+constexpr RQuantity<M, L, T, A> operator*(const RQuantity<M, L, T, A> &lhs, const double &rhs) {
+  return RQuantity<M, L, T, A>(lhs.getValue() * rhs);
+}
 template <typename M1,
           typename L1,
           typename T1,
@@ -120,14 +127,14 @@ constexpr RQuantity<std::ratio_subtract<std::ratio<0>, M>,
                     std::ratio_subtract<std::ratio<0>, L>,
                     std::ratio_subtract<std::ratio<0>, T>,
                     std::ratio_subtract<std::ratio<0>, A>>
-operator/(double x, const RQuantity<M, L, T, A> &rhs) {
+operator/(const double &x, const RQuantity<M, L, T, A> &rhs) {
   return RQuantity<std::ratio_subtract<std::ratio<0>, M>,
                    std::ratio_subtract<std::ratio<0>, L>,
                    std::ratio_subtract<std::ratio<0>, T>,
                    std::ratio_subtract<std::ratio<0>, A>>(x / rhs.getValue());
 }
 template <typename M, typename L, typename T, typename A>
-constexpr RQuantity<M, L, T, A> operator/(const RQuantity<M, L, T, A> &rhs, double x) {
+constexpr RQuantity<M, L, T, A> operator/(const RQuantity<M, L, T, A> &rhs, const double &x) {
   return RQuantity<M, L, T, A>(rhs.getValue() / x);
 }
 
@@ -170,5 +177,3 @@ constexpr long double operator"" _pi(unsigned long long int x) {
 
 // Conversion macro, which utilizes the string literals
 #define ConvertTo(_x, _y) (_x).convert(1.0_##_y)
-
-#endif

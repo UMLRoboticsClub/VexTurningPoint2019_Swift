@@ -7,13 +7,10 @@
  */
 #pragma once
 
-#include "okapi/api/chassis/controller/chassisScales.hpp"
-#include "okapi/api/chassis/model/skidSteerModel.hpp"
 #include "okapi/api/control/async/asyncPositionController.hpp"
+#include "okapi/api/control/controllerOutput.hpp"
 #include "okapi/api/units/QAngle.hpp"
-#include "okapi/api/units/QAngularSpeed.hpp"
 #include "okapi/api/units/QLength.hpp"
-#include "okapi/api/units/QSpeed.hpp"
 #include "okapi/api/util/logging.hpp"
 #include "okapi/api/util/timeUtil.hpp"
 #include <atomic>
@@ -24,35 +21,25 @@ extern "C" {
 }
 
 namespace okapi {
-struct Point {
-  QLength x;    // X coordinate relative to the start of the movement
-  QLength y;    // Y coordinate relative to the start of the movement
-  QAngle theta; // Exit angle relative to the start of the movement
-};
-
-class AsyncMotionProfileController : public AsyncPositionController<std::string, Point> {
+class AsyncLinearMotionProfileController : public AsyncPositionController<std::string, double> {
   public:
   /**
-   * An Async Controller which generates and follows 2D motion profiles. Throws a
-   * std::invalid_argument exception if the gear ratio is zero.
+   * An Async Controller which generates and follows 1D motion profiles.
    *
-   * @param imaxVel The maximum possible velocity in m/s.
-   * @param imaxAccel The maximum possible acceleration in m/s/s.
-   * @param imaxJerk The maximum possible jerk in m/s/s/s.
-   * @param imodel The chassis model to control.
-   * @param iwidth The chassis wheelbase width.
+   * @param imaxVel The maximum possible velocity.
+   * @param imaxAccel The maximum possible acceleration.
+   * @param imaxJerk The maximum possible jerk.
+   * @param ioutput The output to write velocity targets to.
    */
-  AsyncMotionProfileController(const TimeUtil &itimeUtil,
-                               double imaxVel,
-                               double imaxAccel,
-                               double imaxJerk,
-                               const std::shared_ptr<ChassisModel> &imodel,
-                               const ChassisScales &iscales,
-                               AbstractMotor::GearsetRatioPair ipair);
+  AsyncLinearMotionProfileController(const TimeUtil &itimeUtil,
+                                     double imaxVel,
+                                     double imaxAccel,
+                                     double imaxJerk,
+                                     const std::shared_ptr<ControllerOutput<double>> &ioutput);
 
-  AsyncMotionProfileController(AsyncMotionProfileController &&other) noexcept;
+  AsyncLinearMotionProfileController(AsyncLinearMotionProfileController &&other) noexcept;
 
-  ~AsyncMotionProfileController() override;
+  ~AsyncLinearMotionProfileController() override;
 
   /**
    * Generates a path which intersects the given waypoints and saves it internally with a key of
@@ -65,7 +52,7 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
    * @param iwaypoints The waypoints to hit on the path.
    * @param ipathId A unique identifier to save the path with.
    */
-  void generatePath(std::initializer_list<Point> iwaypoints, const std::string &ipathId);
+  void generatePath(std::initializer_list<double> iwaypoints, const std::string &ipathId);
 
   /**
    * Removes a path and frees the memory it used.
@@ -103,19 +90,34 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
   std::string getTarget() override;
 
   /**
+   * Gets the last set target, or the default target if none was set.
+   *
+   * @return the last target
+   */
+  std::string getTarget() const;
+
+  /**
    * Blocks the current task until the controller has settled. This controller is settled when
    * it has finished following a path. If no path is being followed, it is settled.
    */
   void waitUntilSettled() override;
 
   /**
-   * Returns the last error of the controller. This implementation always returns zero since the
-   * robot is assumed to perfectly follow the path. Subclasses can override this to be more
-   * accurate using odometry information.
+   * Generates a new path from the position (typically the current position) to the target and
+   * blocks until the controller has settled. Does not save the path which was generated.
+   *
+   * @param iposition The starting position.
+   * @param itarget The target position.
+   */
+  void moveTo(double iposition, double itarget);
+
+  /**
+   * Returns the last error of the controller. Returns zero if there is no path currently being
+   * followed.
    *
    * @return the last error
    */
-  Point getError() const override;
+  double getError() const override;
 
   /**
    * Returns whether the controller has settled at the target. Determining what settling means is
@@ -128,8 +130,8 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
   bool isSettled() override;
 
   /**
-   * Resets the controller so it can start from 0 again properly. Keeps configuration from
-   * before. This implementation also stops movement.
+   * Resets the controller's internal state so it is similar to when it was first initialized, while
+   * keeping any user-configured information. This implementation also stops movement.
    */
   void reset() override;
 
@@ -162,8 +164,7 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
 
   protected:
   struct TrajectoryPair {
-    Segment *left;
-    Segment *right;
+    Segment *segment;
     int length;
   };
 
@@ -172,9 +173,8 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
   double maxVel{0};
   double maxAccel{0};
   double maxJerk{0};
-  std::shared_ptr<ChassisModel> model;
-  ChassisScales scales;
-  AbstractMotor::GearsetRatioPair pair;
+  std::shared_ptr<ControllerOutput<double>> output;
+  double currentProfilePosition{0};
   TimeUtil timeUtil;
 
   std::string currentPath{""};
@@ -190,13 +190,5 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
    * Follow the supplied path. Must follow the disabled lifecycle.
    */
   virtual void executeSinglePath(const TrajectoryPair &path, std::unique_ptr<AbstractRate> rate);
-
-  /**
-   * Converts linear chassis speed to rotational motor speed.
-   *
-   * @param linear chassis frame speed
-   * @return motor frame speed
-   */
-  QAngularSpeed convertLinearToRotational(QSpeed linear) const;
 };
 } // namespace okapi

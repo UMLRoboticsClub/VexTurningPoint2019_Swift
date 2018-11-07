@@ -5,8 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _OKAPI_ITERATIVECONTROLLER_HPP_
-#define _OKAPI_ITERATIVECONTROLLER_HPP_
+#pragma once
 
 #include "okapi/api/control/closedLoopController.hpp"
 #include "okapi/api/units/QTime.hpp"
@@ -14,6 +13,9 @@
 namespace okapi {
 /**
  * Closed-loop controller that steps iteratively using the step method below.
+ *
+ * ControllerOutput::controllerSet() should set the controller's target to the input scaled by the
+ * output bounds.
  */
 template <typename Input, typename Output>
 class IterativeController : public ClosedLoopController<Input, Output> {
@@ -40,6 +42,20 @@ class IterativeController : public ClosedLoopController<Input, Output> {
   virtual void setOutputLimits(Output imax, Output imin) = 0;
 
   /**
+   * Get the upper output bound.
+   *
+   * @return  the upper output bound
+   */
+  virtual Output getMaxOutput() = 0;
+
+  /**
+   * Get the lower output bound.
+   *
+   * @return the lower output bound
+   */
+  virtual Output getMinOutput() = 0;
+
+  /**
    * Set time between loops.
    *
    * @param isampleTime time between loops
@@ -54,5 +70,3 @@ class IterativeController : public ClosedLoopController<Input, Output> {
   virtual QTime getSampleTime() const = 0;
 };
 } // namespace okapi
-
-#endif

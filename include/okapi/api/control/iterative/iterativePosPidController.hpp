@@ -7,8 +7,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _OKAPI_ITERATIVEPOSPIDCONTROLLER_HPP_
-#define _OKAPI_ITERATIVEPOSPIDCONTROLLER_HPP_
+#pragma once
 
 #include "okapi/api/control/iterative/iterativePositionController.hpp"
 #include "okapi/api/control/util/settledUtil.hpp"
@@ -76,6 +75,14 @@ class IterativePosPIDController : public IterativePositionController<double, dou
   void setTarget(double itarget) override;
 
   /**
+   * Writes the value of the controller output. This method might be automatically called in another
+   * thread by the controller. The range of input values is expected to be [-1, 1].
+   *
+   * @param ivalue the controller's output in the range [-1, 1]
+   */
+  void controllerSet(double ivalue) override;
+
+  /**
    * Gets the last set target, or the default target if none was set.
    *
    * @return the last target
@@ -87,6 +94,20 @@ class IterativePosPIDController : public IterativePositionController<double, dou
    * unless the bounds have been changed with setOutputLimits().
    */
   double getOutput() const override;
+
+  /**
+   * Get the upper output bound.
+   *
+   * @return  the upper output bound
+   */
+  double getMaxOutput() override;
+
+  /**
+   * Get the lower output bound.
+   *
+   * @return the lower output bound
+   */
+  double getMinOutput() override;
 
   /**
    * Returns the last error of the controller.
@@ -147,8 +168,8 @@ class IterativePosPIDController : public IterativePositionController<double, dou
   virtual void setErrorSumLimits(double imax, double imin);
 
   /**
-   * Resets the controller so it can start from 0 again properly. Keeps gains and limits from
-   * before.
+   * Resets the controller's internal state so it is similar to when it was first initialized, while
+   * keeping any user-configured information.
    */
   void reset() override;
 
@@ -190,37 +211,35 @@ class IterativePosPIDController : public IterativePositionController<double, dou
   protected:
   Logger *logger;
   double kP, kI, kD, kBias;
-  QTime sampleTime = 10_ms;
-  double target = 0;
-  double lastReading = 0;
-  double error = 0;
-  double lastError = 0;
+  QTime sampleTime{10_ms};
+  double target{0};
+  double lastReading{0};
+  double error{0};
+  double lastError{0};
   std::unique_ptr<Filter> derivativeFilter;
 
   // Integral bounds
-  double integral = 0;
-  double integralMax = 1;
-  double integralMin = -1;
+  double integral{0};
+  double integralMax{1};
+  double integralMin{-1};
 
   // Error will only be added to the integral term within these bounds on either side of the target
-  double errorSumMin = 0;
-  double errorSumMax = std::numeric_limits<double>::max();
+  double errorSumMin{0};
+  double errorSumMax{std::numeric_limits<double>::max()};
 
-  double derivative = 0;
+  double derivative{0};
 
   // Output bounds
-  double output = 0;
-  double outputMax = 1;
-  double outputMin = -1;
+  double output{0};
+  double outputMax{1};
+  double outputMin{-1};
 
   // Reset the integrated when the controller crosses 0 or not
-  bool shouldResetOnCross = true;
+  bool shouldResetOnCross{true};
 
-  bool isOn = true;
+  bool controllerIsDisabled{false};
 
   std::unique_ptr<AbstractTimer> loopDtTimer;
   std::unique_ptr<SettledUtil> settledUtil;
 };
 } // namespace okapi
-
-#endif

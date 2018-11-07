@@ -5,8 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef _OKAPI_SKIDSTEERMODEL_HPP_
-#define _OKAPI_SKIDSTEERMODEL_HPP_
+#pragma once
 
 #include "okapi/api/chassis/model/chassisModel.hpp"
 #include "okapi/api/device/motor/abstractMotor.hpp"
@@ -17,7 +16,7 @@ class SkidSteerModel : public ChassisModel {
   public:
   /**
    * Model for a skid steer drive (wheels parallel with robot's direction of motion). When all
-   * motors are powered +127, the robot should move forward in a straight line.
+   * motors are powered +100%, the robot should move forward in a straight line.
    *
    * This constructor infers the two sensors from the left and right motors (using the integrated
    * encoders).
@@ -25,25 +24,25 @@ class SkidSteerModel : public ChassisModel {
    * @param ileftSideMotor left side motor
    * @param irightSideMotor right side motor
    */
-  SkidSteerModel(std::shared_ptr<AbstractMotor> ileftSideMotor,
-                 std::shared_ptr<AbstractMotor> irightSideMotor,
-                 double imaxVelocity = 127,
+  SkidSteerModel(const std::shared_ptr<AbstractMotor> &ileftSideMotor,
+                 const std::shared_ptr<AbstractMotor> &irightSideMotor,
+                 double imaxVelocity,
                  double imaxVoltage = 12000);
 
   /**
    * Model for a skid steer drive (wheels parallel with robot's direction of motion). When all
-   * motors are powered +127, the robot should move forward in a straight line.
+   * motors are powered +100%, the robot should move forward in a straight line.
    *
    * @param ileftSideMotor left side motor
    * @param irightSideMotor right side motor
    * @param ileftEnc  left side encoder
    * @param irightEnc right side encoder
    */
-  SkidSteerModel(std::shared_ptr<AbstractMotor> ileftSideMotor,
-                 std::shared_ptr<AbstractMotor> irightSideMotor,
-                 std::shared_ptr<ContinuousRotarySensor> ileftEnc,
-                 std::shared_ptr<ContinuousRotarySensor> irightEnc,
-                 double imaxVelocity = 127,
+  SkidSteerModel(const std::shared_ptr<AbstractMotor> &ileftSideMotor,
+                 const std::shared_ptr<AbstractMotor> &irightSideMotor,
+                 const std::shared_ptr<ContinuousRotarySensor> &ileftEnc,
+                 const std::shared_ptr<ContinuousRotarySensor> &irightEnc,
+                 double imaxVelocity,
                  double imaxVoltage = 12000);
 
   /**
@@ -88,11 +87,11 @@ class SkidSteerModel : public ChassisModel {
   /**
    * Drive the robot with an arcade drive layout. Uses voltage mode.
    *
-   * @param iySpeed speed on y axis (forward)
-   * @param izRotation speed around z axis (up)
+   * @param iforwardSpeed speed in the forward direction
+   * @param iyaw speed around the vertical axis
    * @param ithreshold deadband on joystick values
    */
-  void arcade(double iySpeed, double izRotation, double ithreshold = 0) const override;
+  void arcade(double iforwardSpeed, double iyaw, double ithreshold = 0) const override;
 
   /**
    * Power the left side motors. Uses velocity mode.
@@ -226,9 +225,5 @@ class SkidSteerModel : public ChassisModel {
   std::shared_ptr<AbstractMotor> rightSideMotor;
   std::shared_ptr<ContinuousRotarySensor> leftSensor;
   std::shared_ptr<ContinuousRotarySensor> rightSensor;
-  const double maxVelocity;
-  const double maxVoltage;
 };
 } // namespace okapi
-
-#endif
