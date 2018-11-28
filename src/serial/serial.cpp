@@ -9,6 +9,8 @@
 
 #include "crc.h"
 
+#include "serial.h"
+
 using std::cin;
 using std::cout;
 using std::endl;
@@ -17,11 +19,7 @@ using std::vector;
 
 const char *header = "zz ";
 
-typedef std::pair<int, int> Point;
-
-void parseInput(string &input, vector<Point> &targets);
-void doThing(vector<Point> &targets);
-void readAndParseVisionData();
+void (*doThing)(vector<Point>&);
 
 void parseInput(string &input, vector<Point> &targets){
     const char *buf = input.c_str();
@@ -107,11 +105,15 @@ void parseInput(string &input, vector<Point> &targets){
 #endif
 }
 
-void doThing(vector<Point> &targets){
-    //targets.size();
-    for(auto &a : targets){
-        cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
-    }
+//void doThing(vector<Point> &targets){
+//    //targets.size();
+//    for(auto &a : targets){
+//        cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
+//    }
+//}
+
+void setCallback(void (*callback)(vector<Point>&)){
+    doThing = callback;
 }
 
 void readAndParseVisionData(){

@@ -13,4 +13,26 @@
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() { }
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <utility>
+
+#include "serial/serial.h"
+
+using std::cout;
+using std::endl;
+using std::cin;
+using std::vector;
+
+void processPoints(vector<Point> &targets){
+    for(auto &a : targets){
+        cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
+    }
+}
+
+void opcontrol() {
+    setCallback(processPoints);
+    readAndParseVisionData();
+}
