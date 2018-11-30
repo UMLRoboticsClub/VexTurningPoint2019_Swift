@@ -105,14 +105,7 @@ void parseInput(string &input, vector<Point> &targets){
 #endif
 }
 
-//void doThing(vector<Point> &targets){
-//    //targets.size();
-//    for(auto &a : targets){
-//        cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
-//    }
-//}
-
-void setCallback(void (*callback)(vector<Point>&)){
+void setVisionCallback(void (*callback)(vector<Point>&)){
     doThing = callback;
 }
 

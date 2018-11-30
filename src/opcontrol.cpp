@@ -21,6 +21,8 @@
 
 #include "serial/serial.h"
 
+#include "pros/apix.h"
+
 using std::cout;
 using std::endl;
 using std::cin;
@@ -33,6 +35,9 @@ void processPoints(vector<Point> &targets){
 }
 
 void opcontrol() {
-    setCallback(processPoints);
+    //disable COBS (serial output formatting)
+    serctl(SERCTL_DISABLE_COBS, NULL);
+
+    setVisionCallback(processPoints);
     readAndParseVisionData();
 }
