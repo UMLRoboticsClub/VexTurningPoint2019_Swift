@@ -1,5 +1,6 @@
 #include "main.h"
 #include "api.h"
+#include "okapi/api.hpp"
 
 class ShooterBot{
 public:
@@ -16,14 +17,14 @@ public:
 	
 	
 	okapi::ChassisControllerIntegrated chassis;
-	okapi::motor hoodMotor;
-	okapi::motor flyWheelMotor;
-	okapi::motor turretMotor;
-	okapi::motor intakeMotor;
-	okapi::motor transferMotor;
+	okapi::Motor hoodMotor;
+	okapi::Motor flyWheelMotor;
+	okapi::Motor turretMotor;
+	okapi::Motor intakeMotor;
+	okapi::Motor transferMotor;
 	double hoodAngle;
 	double turretAngle;
 	//sensor ballSensor	
 
 
-}
+};

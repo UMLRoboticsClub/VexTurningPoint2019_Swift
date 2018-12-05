@@ -1,4 +1,4 @@
-
+#include "shooterBot.h"
 
 ShooterBot::ShooterBot(){
 	hoodAngle = 0;
