@@ -10,7 +10,7 @@ public:
 	void findTarget();//this might not be necessary, figure out our tracking
 	void aimTurret(double angle);
 	void aimHood(double angle);
-	void shoot();
+	void shoot(double angle);
 	int ballsLoaded();
 	void runIntake(int direction);
 	void runTransfer(int direction);

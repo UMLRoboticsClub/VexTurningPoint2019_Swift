@@ -1,21 +1,21 @@
 #include "shooterBot.h"
 
-ShooterBot::ShooterBot(){
+ShooterBot::ShooterBot(): chassis(okapi::ChassisControllerFactory::create(okapi::MotorGroup({0,1,2}), okapi::MotorGroup({3,4,5}), okapi::AbstractMotor::gearset::red, okapi::ChassisScales({3.25, 22.0}))), hoodMotor(6), flyWheelMotor(7), turretMotor(8), intakeMotor(9), transferMotor(10){
 	hoodAngle = 0;
 	turretAngle = 0;
 
-	okapi::MotorGroup leftDriveTrain({0, 1, 2});
-	okapi::MotorGroup rightDriveTrain({3, 4, 5});
+	//okapi::MotorGroup leftDriveTrain({0, 1, 2});
+	//okapi::MotorGroup rightDriveTrain({3, 4, 5});
 	
-	okapi::ChassisScales scale(3.25_in, 22_in);
+	//okapi::ChassisScales scale(3.25_in, 22_in);
 
-	chassis = okapi::chassisControllerFactory::create(leftDriveTrain, rightDriveTrain, AbstractMotor::gearset::red, scale);
+	//chassis = okapi::chassisControllerFactory::create(leftDriveTrain, rightDriveTrain, AbstractMotor::gearset::red, scale);
 
-	hoodmotor = okapi::motor(6);
-	flyWheelMotor = okapi::motor(7);
-	turretMotor = okapi::motor(8);
-	intakeMotor = okapi::motor(9);
-	transferMotor = okapi::motor(10);
+	//hoodmotor = okapi::Motor(6);
+	//flyWheelMotor = okapi::Motor(7);
+	//turretMotor = okapi::Motor(8);
+	//intakeMotor = okapi::Motor(9);
+	//transferMotor = okapi::Motor(10);
 	zero();
 }
 
