@@ -1,4 +1,5 @@
 #include "main.h"
+#include "pros/apix.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -6,7 +7,15 @@
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {}
+void initialize() {
+
+    //disable COBS (serial output formatting)
+    serctl(SERCTL_DISABLE_COBS, NULL);
+
+    //clear buffers
+    fflush(stdin);
+    fflush(stdout);
+}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or

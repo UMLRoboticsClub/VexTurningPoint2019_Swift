@@ -7,8 +7,9 @@
 #include <climits>
 #include <utility>
 
-#include "crc.h"
+#include "pros/apix.h"
 
+#include "crc.h"
 #include "serial.h"
 
 using std::cin;
@@ -109,20 +110,24 @@ void setVisionCallback(void (*callback)(vector<Point>&)){
     doThing = callback;
 }
 
-void readAndParseVisionData(){
-    int headerLen = strlen(header);
+void readAndParseVisionData(void*){
+    while(true){
+        int headerLen = strlen(header);
 
-    string input;
-    vector<Point> targets;
-    while(cin){
-        std::getline(cin, input);
-        if(strncmp(input.c_str(), header, headerLen) == 0){
-            cout << input.c_str() << endl;
-        } else {
-            puts(input.c_str());
+        string input;
+        vector<Point> targets;
+        while(cin){
+            std::getline(cin, input);
+
+            //skip if header doesn't exist
+            if(strncmp(input.c_str(), header, headerLen) != 0){
+                continue;
+            }
+
+            targets.clear();
+            parseInput(input, targets);
+            doThing(targets);
         }
-        targets.clear();
-        parseInput(input, targets);
-        doThing(targets);
+        Task::delay(4);
     }
 }
