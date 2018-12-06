@@ -1,5 +1,6 @@
 #include "main.h"
 #include "api.h"
+#include "okapi/api.hpp"
 
 class ShooterBot{
 public:
@@ -9,21 +10,21 @@ public:
 	void findTarget();//this might not be necessary, figure out our tracking
 	void aimTurret(double angle);
 	void aimHood(double angle);
-	void shoot();
+	void shoot(double angle);
 	int ballsLoaded();
 	void runIntake(int direction);
 	void runTransfer(int direction);
 	
 	
 	okapi::ChassisControllerIntegrated chassis;
-	okapi::motor hoodMotor;
-	okapi::motor flyWheelMotor;
-	okapi::motor turretMotor;
-	okapi::motor intakeMotor;
-	okapi::motor transferMotor;
+	okapi::Motor hoodMotor;
+	okapi::Motor flyWheelMotor;
+	okapi::Motor turretMotor;
+	okapi::Motor intakeMotor;
+	okapi::Motor transferMotor;
 	double hoodAngle;
 	double turretAngle;
 	//sensor ballSensor	
 
 
-}
+};
