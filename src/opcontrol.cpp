@@ -73,10 +73,9 @@ void processPoints(vector<Point> &targets){
     delay(5);
     lv_vdb_flush();
 
-    if(millis() == 1000){
+    if(millis() > 3000){
         lv_ta_set_text(ta1, "");
     }
-
 }
 
 void opcontrol() {

@@ -111,27 +111,25 @@ void setVisionCallback(void (*callback)(vector<Point>&)){
 }
 
 void readAndParseVisionData(void*){
+    int headerLen = strlen(header);
+    string input;
+    vector<Point> targets;
     while(true){
-        int headerLen = strlen(header);
 
-        string input;
-        vector<Point> targets;
+        //while(cin){
+        //    std::getline(cin, input);
 
-        /////get all lines in buffer, only use the last
-        ///while(getline(cin, input));
+        //get all lines in buffer, only use the last
+        while(getline(cin, input));
 
-        while(cin){
-            std::getline(cin, input);
-
-            //skip if header doesn't exist
-            if(strncmp(input.c_str(), header, headerLen) != 0){
-                continue;
-            }
-
-            targets.clear();
-            parseInput(input, targets);
-            doThing(targets);
+        //skip if header doesn't exist
+        if(strncmp(input.c_str(), header, headerLen) != 0){
+            continue;
         }
+
+        targets.clear();
+        parseInput(input, targets);
+        doThing(targets);
         Task::delay(4);
     }
 }
