@@ -116,6 +116,10 @@ void readAndParseVisionData(void*){
 
         string input;
         vector<Point> targets;
+
+        /////get all lines in buffer, only use the last
+        ///while(getline(cin, input));
+
         while(cin){
             std::getline(cin, input);
 

@@ -41,6 +41,7 @@ void ShooterBot::shoot(double angle){
 
 int ShooterBot::ballsLoaded(){
 	//check dat sensor to figure out if we got balls
+    return 0;
 }
 
 void runIntake(int direction){

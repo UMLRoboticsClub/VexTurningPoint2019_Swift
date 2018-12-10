@@ -72,9 +72,16 @@ void processPoints(vector<Point> &targets){
     }
     delay(5);
     lv_vdb_flush();
+
+    if(millis() == 1000){
+        lv_ta_set_text(ta1, "");
+    }
+
 }
 
 void opcontrol() {
+    puts("opcontrol starting...");
+
     //create text area
     ta1 = lv_ta_create(lv_scr_act(), NULL);
     lv_obj_set_size(ta1, 480, 240);
