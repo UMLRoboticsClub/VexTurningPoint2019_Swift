@@ -73,13 +73,13 @@ void processPoints(vector<Point> &targets){
     delay(5);
     lv_vdb_flush();
 
-    if(millis() > 3000){
+    if(millis() > 5000){
         lv_ta_set_text(ta1, "");
     }
 }
 
 void opcontrol() {
-    puts("opcontrol starting...");
+    puts("starting...");
 
     //create text area
     ta1 = lv_ta_create(lv_scr_act(), NULL);
@@ -90,5 +90,5 @@ void opcontrol() {
 
     Task ser_read(readAndParseVisionData);
 
-    while(1){ delay(100); }
+    while(1){ delay(1000); }
 }

@@ -22,11 +22,11 @@ const char *header = "zz ";
 
 void (*doThing)(vector<Point>&);
 
-void parseInput(string &input, vector<Point> &targets){
-    const char *buf = input.c_str();
+void parseInput(const char *buf, vector<Point> &targets){
+    int len = strlen(buf);
 #ifdef DEBUG
     cout << "input: " << buf << endl;
-    cout << "size : " << input.size() << endl;
+    cout << "size : " << len << endl;
 #endif
     int pktIndex = 0;
 
@@ -34,7 +34,7 @@ void parseInput(string &input, vector<Point> &targets){
     const char *header = "zz ";
     const int headerSize = strlen(header);
 
-    if((int)input.size() < headerSize + 8){
+    if(len < headerSize + 8){
 #ifdef DEBUG
         cout << "packet messed up: too small" << endl;
 #endif
@@ -104,6 +104,8 @@ void parseInput(string &input, vector<Point> &targets){
     cout << "CRCs match!" << endl;
     cout << endl;
 #endif
+    //TODO:remove this later
+    cout << "CRCs match!" << endl;
 }
 
 void setVisionCallback(void (*callback)(vector<Point>&)){
@@ -112,24 +114,20 @@ void setVisionCallback(void (*callback)(vector<Point>&)){
 
 void readAndParseVisionData(void*){
     int headerLen = strlen(header);
-    string input;
     vector<Point> targets;
+    char buf[128];
     while(true){
-
-        //while(cin){
-        //    std::getline(cin, input);
-
-        //get all lines in buffer, only use the last
-        while(getline(cin, input));
+        cin.getline(buf, 128);
 
         //skip if header doesn't exist
-        if(strncmp(input.c_str(), header, headerLen) != 0){
+        if(strncmp(buf, header, headerLen) != 0){
+            cout << "header doesn't exist:[" << buf << "]" << endl;
             continue;
         }
-
+        cout << "header exists" << endl;
+        
         targets.clear();
-        parseInput(input, targets);
+        parseInput(buf, targets);
         doThing(targets);
-        Task::delay(4);
     }
 }

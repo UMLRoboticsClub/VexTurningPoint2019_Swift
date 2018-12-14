@@ -9,9 +9,6 @@
  */
 
 void initialize() {
-
-    putchar('z');
-
     //disable COBS (serial output formatting)
     serctl(SERCTL_DISABLE_COBS, NULL);
 
