@@ -51,6 +51,7 @@ void parseInput(const char *buf, vector<Point> &targets){
             return;
         }
     }
+
 #ifdef DEBUG
     cout << "packet header ok" << endl;
 #endif
@@ -68,9 +69,11 @@ void parseInput(const char *buf, vector<Point> &targets){
         //int num = strtol(end, &end, 10);
         //targets.emplace_back((int)strtol(end, &end, 10), num);
         targets.emplace_back((int)strtol(end, &end, 10), (int)strtol(end, &end, 10));
+
 #ifdef DEBUG
         cout << "point:" << '[' << targets.back().second << "," << targets.back().first << ']' << endl;
 #endif
+
     }
 
     //cout << "size size: " << sizeSize << endl;
@@ -85,25 +88,30 @@ void parseInput(const char *buf, vector<Point> &targets){
     cout << endl;
 #endif
 
-
     uint32_t repcrc = strtol(end, &end, 10);
     uint32_t gencrc = crc32buf((char*)dataStart, dataLen);
+
 #ifdef DEBUG
     cout << "reported crc: " << repcrc << endl;
     cout << "generated crc: " << gencrc << endl;
 #endif
+
     if(repcrc != gencrc) {
+
 #ifdef DEBUG
         cout << "bad crc" << endl;
         cout << endl;
 #endif
+
         targets.clear();
         return;
     }
+
 #ifdef DEBUG
     cout << "CRCs match!" << endl;
     cout << endl;
 #endif
+
     //TODO:remove this later
     cout << "CRCs match!" << endl;
 }

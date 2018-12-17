@@ -1,6 +1,7 @@
 #include "main.h"
 #include "pros/apix.h"
 
+//runs before initialize
 class PreConfig {
     public:
         PreConfig(){
@@ -11,10 +12,7 @@ class PreConfig {
             fflush(stdin);
             fflush(stdout);
         }
-};
-
-//this runs before initialize and the pros splash
-static PreConfig conf;
+} conf;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
