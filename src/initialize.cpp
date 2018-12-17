@@ -1,21 +1,28 @@
 #include "main.h"
 #include "pros/apix.h"
 
+class PreConfig {
+    public:
+        PreConfig(){
+            //disable COBS (serial output formatting)
+            serctl(SERCTL_DISABLE_COBS, NULL);
+
+            //clear buffers
+            fflush(stdin);
+            fflush(stdout);
+        }
+};
+
+//this runs before initialize and the pros splash
+static PreConfig conf;
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-
-void initialize() {
-    //disable COBS (serial output formatting)
-    serctl(SERCTL_DISABLE_COBS, NULL);
-
-    //clear buffers
-    fflush(stdin);
-    fflush(stdout);
-}
+void initialize() {}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or

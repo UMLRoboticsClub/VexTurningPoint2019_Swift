@@ -90,5 +90,18 @@ void opcontrol() {
 
     Task ser_read(readAndParseVisionData);
 
+
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+
     while(1){ delay(1000); }
 }
