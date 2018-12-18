@@ -1,11 +1,13 @@
-//#define DEBUG
+#define DEBUG
+
 #include <iostream>
-#include <cstdio>
 #include <string>
-#include <cstring>
 #include <vector>
-#include <climits>
 #include <utility>
+
+#include <cstdio>
+#include <cstring>
+#include <climits>
 
 #include "pros/apix.h"
 
@@ -25,7 +27,7 @@ void (*doThing)(vector<Point>&);
 void parseInput(const char *buf, vector<Point> &targets){
     int len = strlen(buf);
 #ifdef DEBUG
-    cout << "input: " << buf << endl;
+    cout << "input: [" << buf << "]" << endl;
     cout << "size : " << len << endl;
 #endif
     int pktIndex = 0;
@@ -51,6 +53,14 @@ void parseInput(const char *buf, vector<Point> &targets){
             return;
         }
     }
+
+
+
+
+//TODO:sometimes crc fails for no reason wtf
+
+    
+
 
 #ifdef DEBUG
     cout << "packet header ok" << endl;
@@ -78,7 +88,7 @@ void parseInput(const char *buf, vector<Point> &targets){
 
     //cout << "size size: " << sizeSize << endl;
 
-    const char *dataStart = buf + pktIndex + sizeSize;
+    char *dataStart = (char*)buf + pktIndex + sizeSize;
     const int dataLen = end - buf - (dataStart - buf);
 
 #ifdef DEBUG
@@ -89,7 +99,7 @@ void parseInput(const char *buf, vector<Point> &targets){
 #endif
 
     uint32_t repcrc = strtol(end, &end, 10);
-    uint32_t gencrc = crc32buf((char*)dataStart, dataLen);
+    uint32_t gencrc = crc32buf(dataStart, dataLen);
 
 #ifdef DEBUG
     cout << "reported crc: " << repcrc << endl;
@@ -99,8 +109,9 @@ void parseInput(const char *buf, vector<Point> &targets){
     if(repcrc != gencrc) {
 
 #ifdef DEBUG
-        cout << "bad crc" << endl;
+        cout << "Bad CRC!" << endl;
         cout << endl;
+        fflush(stdout);
 #endif
 
         targets.clear();
@@ -110,10 +121,9 @@ void parseInput(const char *buf, vector<Point> &targets){
 #ifdef DEBUG
     cout << "CRCs match!" << endl;
     cout << endl;
+    fflush(stdout);
 #endif
 
-    //TODO:remove this later
-    cout << "CRCs match!" << endl;
 }
 
 void setVisionCallback(void (*callback)(vector<Point>&)){
@@ -124,18 +134,28 @@ void readAndParseVisionData(void*){
     int headerLen = strlen(header);
     vector<Point> targets;
     char buf[128];
+
+    size_t size = 128;
+
     while(true){
         cin.getline(buf, 128);
 
         //skip if header doesn't exist
         if(strncmp(buf, header, headerLen) != 0){
+#ifdef DEBUG
             cout << "header doesn't exist:[" << buf << "]" << endl;
+#endif
             continue;
         }
+#ifdef DEBUG
         cout << "header exists" << endl;
-        
+#endif
+
         targets.clear();
+        cout << "parsing input" << endl;
         parseInput(buf, targets);
+        cout << "processing points" << endl;
         doThing(targets);
+        cout << "new loooop" << endl;
     }
 }

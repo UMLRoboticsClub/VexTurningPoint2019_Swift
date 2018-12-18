@@ -53,11 +53,13 @@ lv_obj_t *ta1;
 //}
 
 void processPoints(vector<Point> &targets){
-    string pt_str;
+
+    cout << "processPoints start" << endl;
+
     for(auto &a : targets){
         //cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
 
-        pt_str.clear();
+        string pt_str;
         pt_str += "point:";
         pt_str += "[";
         pt_str += std::to_string(a.second);
@@ -65,21 +67,24 @@ void processPoints(vector<Point> &targets){
         pt_str += std::to_string(a.first);
         pt_str += "]\n";
 
-        lv_ta_add_text(ta1, pt_str.c_str());
+        //lv_ta_add_text(ta1, pt_str.c_str());
 
         cout << pt_str << endl;
         //drawTarget(a);
     }
-    delay(5);
-    lv_vdb_flush();
+    //lv_vdb_flush();
+    //delay(5);
+    fflush(stdout);
 
-    if(millis() > 5000){
-        lv_ta_set_text(ta1, "");
-    }
+    //if(millis() > 5000){
+    //    lv_ta_set_text(ta1, "");
+    //}
+
+    cout << "processPoints end" << endl;
 }
 
 void opcontrol() {
-    puts("starting...");
+    puts("starting...\n");
 
     //create text area
     ta1 = lv_ta_create(lv_scr_act(), NULL);
@@ -90,17 +95,6 @@ void opcontrol() {
 
     Task ser_read(readAndParseVisionData);
 
-
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
     asm("nop");
 
     while(1){ delay(1000); }
