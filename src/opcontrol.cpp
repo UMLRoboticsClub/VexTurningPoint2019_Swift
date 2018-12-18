@@ -60,9 +60,9 @@ void processPoints(vector<Point> &targets){
         string pt_str;
         pt_str += "point:";
         pt_str += "[";
-        pt_str += std::to_string(a.second);
-        pt_str += ",";
         pt_str += std::to_string(a.first);
+        pt_str += ",";
+        pt_str += std::to_string(a.second);
         pt_str += "]\n";
 
         //lv_ta_add_text(ta1, pt_str.c_str());

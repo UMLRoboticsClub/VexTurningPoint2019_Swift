@@ -1,4 +1,5 @@
 #define DEBUG
+#define CRCOFF
 
 #include <iostream>
 #include <string>
@@ -81,7 +82,7 @@ void parseInput(const char *buf, vector<Point> &targets){
         targets.emplace_back((int)strtol(end, &end, 10), (int)strtol(end, &end, 10));
 
 #ifdef DEBUG
-        cout << "point:" << '[' << targets.back().second << "," << targets.back().first << ']' << endl;
+        cout << "point:" << '[' << targets.back().first << "," << targets.back().second << ']' << endl;
 #endif
 
     }
@@ -98,6 +99,7 @@ void parseInput(const char *buf, vector<Point> &targets){
     cout << endl;
 #endif
 
+#ifndef CRCOFF
     uint32_t repcrc = strtol(end, &end, 10);
     uint32_t gencrc = crc32buf(dataStart, dataLen);
 
@@ -121,9 +123,11 @@ void parseInput(const char *buf, vector<Point> &targets){
 #ifdef DEBUG
     cout << "CRCs match!" << endl;
     cout << endl;
-    fflush(stdout);
 #endif
 
+#endif
+
+    fflush(stdout);
 }
 
 void setVisionCallback(void (*callback)(vector<Point>&)){
