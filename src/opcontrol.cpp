@@ -54,8 +54,6 @@ lv_obj_t *ta1;
 
 void processPoints(vector<Point> &targets){
 
-    cout << "processPoints start" << endl;
-
     for(auto &a : targets){
         //cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
 
@@ -79,8 +77,6 @@ void processPoints(vector<Point> &targets){
     //if(millis() > 5000){
     //    lv_ta_set_text(ta1, "");
     //}
-
-    cout << "processPoints end" << endl;
 }
 
 void opcontrol() {

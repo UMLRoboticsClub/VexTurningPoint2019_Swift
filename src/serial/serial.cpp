@@ -152,10 +152,7 @@ void readAndParseVisionData(void*){
 #endif
 
         targets.clear();
-        cout << "parsing input" << endl;
         parseInput(buf, targets);
-        cout << "processing points" << endl;
         doThing(targets);
-        cout << "new loooop" << endl;
     }
 }
