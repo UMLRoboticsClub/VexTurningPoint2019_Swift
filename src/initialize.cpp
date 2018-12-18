@@ -1,4 +1,18 @@
 #include "main.h"
+#include "pros/apix.h"
+
+//runs before initialize
+class PreConfig {
+    public:
+        PreConfig(){
+            //disable COBS (serial output formatting)
+            serctl(SERCTL_DISABLE_COBS, NULL);
+
+            //clear buffers
+            fflush(stdin);
+            fflush(stdout);
+        }
+} conf;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.

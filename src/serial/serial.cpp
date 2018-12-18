@@ -1,14 +1,17 @@
-//#define DEBUG
+#define DEBUG
+
 #include <iostream>
-#include <cstdio>
 #include <string>
-#include <cstring>
 #include <vector>
-#include <climits>
 #include <utility>
 
-#include "crc.h"
+#include <cstdio>
+#include <cstring>
+#include <climits>
 
+#include "pros/apix.h"
+
+#include "crc.h"
 #include "serial.h"
 
 using std::cin;
@@ -21,11 +24,11 @@ const char *header = "zz ";
 
 void (*doThing)(vector<Point>&);
 
-void parseInput(string &input, vector<Point> &targets){
-    const char *buf = input.c_str();
+void parseInput(const char *buf, vector<Point> &targets){
+    int len = strlen(buf);
 #ifdef DEBUG
-    cout << "input: " << buf << endl;
-    cout << "size : " << input.size() << endl;
+    cout << "input: [" << buf << "]" << endl;
+    cout << "size : " << len << endl;
 #endif
     int pktIndex = 0;
 
@@ -33,7 +36,7 @@ void parseInput(string &input, vector<Point> &targets){
     const char *header = "zz ";
     const int headerSize = strlen(header);
 
-    if((int)input.size() < headerSize + 8){
+    if(len < headerSize + 8){
 #ifdef DEBUG
         cout << "packet messed up: too small" << endl;
 #endif
@@ -50,6 +53,15 @@ void parseInput(string &input, vector<Point> &targets){
             return;
         }
     }
+
+
+
+
+//TODO:sometimes crc fails for no reason wtf
+
+    
+
+
 #ifdef DEBUG
     cout << "packet header ok" << endl;
 #endif
@@ -67,14 +79,16 @@ void parseInput(string &input, vector<Point> &targets){
         //int num = strtol(end, &end, 10);
         //targets.emplace_back((int)strtol(end, &end, 10), num);
         targets.emplace_back((int)strtol(end, &end, 10), (int)strtol(end, &end, 10));
+
 #ifdef DEBUG
         cout << "point:" << '[' << targets.back().second << "," << targets.back().first << ']' << endl;
 #endif
+
     }
 
     //cout << "size size: " << sizeSize << endl;
 
-    const char *dataStart = buf + pktIndex + sizeSize;
+    char *dataStart = (char*)buf + pktIndex + sizeSize;
     const int dataLen = end - buf - (dataStart - buf);
 
 #ifdef DEBUG
@@ -84,45 +98,64 @@ void parseInput(string &input, vector<Point> &targets){
     cout << endl;
 #endif
 
-
     uint32_t repcrc = strtol(end, &end, 10);
-    uint32_t gencrc = crc32buf((char*)dataStart, dataLen);
+    uint32_t gencrc = crc32buf(dataStart, dataLen);
+
 #ifdef DEBUG
     cout << "reported crc: " << repcrc << endl;
     cout << "generated crc: " << gencrc << endl;
 #endif
+
     if(repcrc != gencrc) {
+
 #ifdef DEBUG
-        cout << "bad crc" << endl;
+        cout << "Bad CRC!" << endl;
         cout << endl;
+        fflush(stdout);
 #endif
+
         targets.clear();
         return;
     }
+
 #ifdef DEBUG
     cout << "CRCs match!" << endl;
     cout << endl;
+    fflush(stdout);
 #endif
+
 }
 
 void setVisionCallback(void (*callback)(vector<Point>&)){
     doThing = callback;
 }
 
-void readAndParseVisionData(){
+void readAndParseVisionData(void*){
     int headerLen = strlen(header);
-
-    string input;
     vector<Point> targets;
-    while(cin){
-        std::getline(cin, input);
-        if(strncmp(input.c_str(), header, headerLen) == 0){
-            cout << input.c_str() << endl;
-        } else {
-            puts(input.c_str());
+    char buf[128];
+
+    size_t size = 128;
+
+    while(true){
+        cin.getline(buf, 128);
+
+        //skip if header doesn't exist
+        if(strncmp(buf, header, headerLen) != 0){
+#ifdef DEBUG
+            cout << "header doesn't exist:[" << buf << "]" << endl;
+#endif
+            continue;
         }
+#ifdef DEBUG
+        cout << "header exists" << endl;
+#endif
+
         targets.clear();
-        parseInput(input, targets);
+        cout << "parsing input" << endl;
+        parseInput(buf, targets);
+        cout << "processing points" << endl;
         doThing(targets);
+        cout << "new loooop" << endl;
     }
 }
