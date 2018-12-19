@@ -32,7 +32,7 @@ git clone https://github.com/UMLRoboticsClub/VexTurningPoint2019_Swift.git
 
 ## Build the project
 ```shell
-cd VexTurningPoint2019
+cd VexTurningPoint2019_Swift
 make
 ```
 
