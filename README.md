@@ -41,7 +41,7 @@ make
 prosv5 upload
 ```
 
-## Open serial connection with cortex
+## Open serial connection with the V5
 ```shell
 prosv5 terminal
 ```

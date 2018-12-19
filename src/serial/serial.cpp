@@ -1,4 +1,5 @@
-#define DEBUG
+//#define DEBUG
+#define CRCOFF
 
 #include <iostream>
 #include <string>
@@ -76,17 +77,13 @@ void parseInput(const char *buf, vector<Point> &targets){
     const int sizeSize = end - afterHeader;
     for(int i = 0; i < size; ++i){
         //get the rest of the numbers
-        //int num = strtol(end, &end, 10);
-        //targets.emplace_back((int)strtol(end, &end, 10), num);
         targets.emplace_back((int)strtol(end, &end, 10), (int)strtol(end, &end, 10));
 
 #ifdef DEBUG
-        cout << "point:" << '[' << targets.back().second << "," << targets.back().first << ']' << endl;
+        cout << "point:" << '[' << targets.back().first << "," << targets.back().second << ']' << endl;
 #endif
 
     }
-
-    //cout << "size size: " << sizeSize << endl;
 
     char *dataStart = (char*)buf + pktIndex + sizeSize;
     const int dataLen = end - buf - (dataStart - buf);
@@ -98,6 +95,7 @@ void parseInput(const char *buf, vector<Point> &targets){
     cout << endl;
 #endif
 
+#ifndef CRCOFF
     uint32_t repcrc = strtol(end, &end, 10);
     uint32_t gencrc = crc32buf(dataStart, dataLen);
 
@@ -121,9 +119,11 @@ void parseInput(const char *buf, vector<Point> &targets){
 #ifdef DEBUG
     cout << "CRCs match!" << endl;
     cout << endl;
-    fflush(stdout);
 #endif
 
+#endif
+
+    fflush(stdout);
 }
 
 void setVisionCallback(void (*callback)(vector<Point>&)){
@@ -152,10 +152,7 @@ void readAndParseVisionData(void*){
 #endif
 
         targets.clear();
-        cout << "parsing input" << endl;
         parseInput(buf, targets);
-        cout << "processing points" << endl;
         doThing(targets);
-        cout << "new loooop" << endl;
     }
 }
