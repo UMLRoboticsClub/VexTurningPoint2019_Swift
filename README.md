@@ -27,7 +27,7 @@ sudo pip install -e .
 
 Clone the repo
 ```shell
-git clone https://github.com/UMLRoboticsClub/VexTurningPoint2019.git
+git clone https://github.com/UMLRoboticsClub/VexTurningPoint2019_Swift.git
 ```
 
 ## Build the project
