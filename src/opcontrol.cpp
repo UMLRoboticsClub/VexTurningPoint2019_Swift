@@ -29,30 +29,30 @@ using std::cin;
 using std::vector;
 using std::string;
 
-////
-//consider flushing stdout after writing
-////
+lv_vdb_t *framebuffer;
 
-lv_obj_t *ta1;
+void drawRect(int x, int y, int w, int h, lv_color_t color){
+    lv_area_t coords;
+    lv_area_set(&coords, x, y, x + w, y + h);
 
-//void drawRect(lv_vdb_t *fb, int x, int y, int w, int h, lv_color_t color){
-//
-//}
-//
-//void drawTarget(Point &p){
-//    const int vid_w = 800;
-//    const int vid_h = 488;
-//
-//    int screen_x = p.first * LV_HOR_RES / vid_w;
-//    int screen_y = p.second * LV_VER_RES / vid_h;
-//
-//    lv_vdb_t *fb = lv_vdb_get();
-//    lv_color_t col;
-//    col.full = COLOR_BLUE;
-//    drawRect(fb, 50, 50, 50, 50, col);
-//}
+    lv_style_plain.body.main_color = color;
+    lv_style_plain.body.grad_color = color;
+    lv_draw_rect(&coords, &coords, &lv_style_plain);
+}
+
+void drawTarget(Point &p){
+    const int vid_w = 800;
+    const int vid_h = 488;
+
+    int screen_x = p.first * LV_HOR_RES / vid_w;
+    int screen_y = p.second * LV_VER_RES / vid_h;
+
+    drawRect(screen_x, screen_y, 50, 30, LV_COLOR_BLUE);
+}
 
 void processPoints(vector<Point> &targets){
+
+    memset(framebuffer->buf, 0, LV_HOR_RES * LV_VER_RES * sizeof(lv_color_t));
 
     for(auto &a : targets){
         //cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
@@ -65,33 +65,31 @@ void processPoints(vector<Point> &targets){
         pt_str += std::to_string(a.second);
         pt_str += "]\n";
 
-        //lv_ta_add_text(ta1, pt_str.c_str());
-
         cout << pt_str << endl;
-        //drawTarget(a);
+        drawTarget(a);
     }
-    //lv_vdb_flush();
-    //delay(5);
+    lv_vdb_flush();
     fflush(stdout);
-
-    //if(millis() > 5000){
-    //    lv_ta_set_text(ta1, "");
-    //}
+    delay(5);
 }
 
 void opcontrol() {
     puts("starting...\n");
 
-    //create text area
-    ta1 = lv_ta_create(lv_scr_act(), NULL);
-    lv_obj_set_size(ta1, 480, 240);
-    lv_ta_set_text(ta1, "");
+    framebuffer = lv_vdb_get();
+
+    //while(1){
+    //    memset(framebuffer->buf, 0, LV_HOR_RES * LV_VER_RES * sizeof(lv_color_t));
+    //    drawRect(50, 50, 50, 50, LV_COLOR_BLUE);
+    //    lv_vdb_flush();
+    //    delay(100);
+    //}
 
     setVisionCallback(processPoints);
 
     Task ser_read(readAndParseVisionData);
 
-    asm("nop");
+    //asm("nop");
 
     while(1){ delay(1000); }
 }

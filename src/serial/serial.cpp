@@ -1,4 +1,4 @@
-#define DEBUG
+//#define DEBUG
 #define CRCOFF
 
 #include <iostream>
@@ -77,8 +77,6 @@ void parseInput(const char *buf, vector<Point> &targets){
     const int sizeSize = end - afterHeader;
     for(int i = 0; i < size; ++i){
         //get the rest of the numbers
-        //int num = strtol(end, &end, 10);
-        //targets.emplace_back((int)strtol(end, &end, 10), num);
         targets.emplace_back((int)strtol(end, &end, 10), (int)strtol(end, &end, 10));
 
 #ifdef DEBUG
@@ -86,8 +84,6 @@ void parseInput(const char *buf, vector<Point> &targets){
 #endif
 
     }
-
-    //cout << "size size: " << sizeSize << endl;
 
     char *dataStart = (char*)buf + pktIndex + sizeSize;
     const int dataLen = end - buf - (dataStart - buf);
