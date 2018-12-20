@@ -50,9 +50,12 @@ void drawTarget(Point &p){
     drawRect(screen_x, screen_y, 50, 30, LV_COLOR_BLUE);
 }
 
-void processPoints(vector<Point> &targets){
-
+void clearScreen(){
     memset(framebuffer->buf, 0, LV_HOR_RES * LV_VER_RES * sizeof(lv_color_t));
+}
+
+void processPoints(vector<Point> &targets){
+    clearScreen();
 
     for(auto &a : targets){
         //cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
