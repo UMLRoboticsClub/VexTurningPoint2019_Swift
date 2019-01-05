@@ -1,6 +1,6 @@
 # VexTurningPoint2019
 
-UML Robotics Club's Vex Turning Point code for our 24 inch robot named Swift
+UML Robotics Club's Vex Turning Point code for our 15 inch robot named Swift
 
 
 ## Building
