@@ -40,10 +40,10 @@ void drawRect(int x, int y, int w, int h, lv_color_t color){
     lv_draw_rect(&coords, &coords, &lv_style_plain);
 }
 
-void drawTarget(Point &p){
-    const int vid_w = 800;
-    const int vid_h = 488;
+const int vid_w = 800;
+const int vid_h = 488;
 
+void drawTarget(Point &p){
     int screen_x = p.first * LV_HOR_RES / vid_w;
     int screen_y = p.second * LV_VER_RES / vid_h;
 
@@ -57,18 +57,11 @@ void clearScreen(){
 void processPoints(vector<Point> &targets){
     clearScreen();
 
+    //draw middle line
+    drawRect(488/2, 0, 1, LV_VER_RES, LV_COLOR_GREEN);
+
     for(auto &a : targets){
-        //cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
-
-        string pt_str;
-        pt_str += "point:";
-        pt_str += "[";
-        pt_str += std::to_string(a.first);
-        pt_str += ",";
-        pt_str += std::to_string(a.second);
-        pt_str += "]\n";
-
-        cout << pt_str << endl;
+        cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
         drawTarget(a);
     }
     lv_vdb_flush();
@@ -81,16 +74,11 @@ void opcontrol() {
 
     framebuffer = lv_vdb_get();
 
-    //while(1){
-    //    memset(framebuffer->buf, 0, LV_HOR_RES * LV_VER_RES * sizeof(lv_color_t));
-    //    drawRect(50, 50, 50, 50, LV_COLOR_BLUE);
-    //    lv_vdb_flush();
-    //    delay(100);
-    //}
-
     setVisionCallback(processPoints);
 
     Task ser_read(readAndParseVisionData);
+
+    Task heartbeat(serialHeartbeat);
 
     //asm("nop");
 

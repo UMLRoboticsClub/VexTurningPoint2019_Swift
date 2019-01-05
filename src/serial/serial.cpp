@@ -22,6 +22,7 @@ using std::string;
 using std::vector;
 
 const char *header = "zz ";
+const int HEARTBEAT_INTV = 1000; //ms
 
 void (*doThing)(vector<Point>&);
 
@@ -131,14 +132,14 @@ void setVisionCallback(void (*callback)(vector<Point>&)){
 }
 
 void readAndParseVisionData(void*){
-    int headerLen = strlen(header);
+    const int headerLen = strlen(header);
     vector<Point> targets;
-    char buf[128];
 
-    size_t size = 128;
+    const int BUF_SIZE = 128;
+    char buf[BUF_SIZE];
 
     while(true){
-        cin.getline(buf, 128);
+        cin.getline(buf, BUF_SIZE);
 
         //skip if header doesn't exist
         if(strncmp(buf, header, headerLen) != 0){
@@ -154,5 +155,15 @@ void readAndParseVisionData(void*){
         targets.clear();
         parseInput(buf, targets);
         doThing(targets);
+    }
+}
+
+void serialHeartbeat(void*){
+    using namespace pros;
+
+    uint32_t now = millis();
+    while(true){
+        cout << endl;
+        Task::delay_until(&now, HEARTBEAT_INTV);
     }
 }
