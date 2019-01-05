@@ -66,6 +66,7 @@ all: clean $(OUTBIN)
 
 upload:
 	prosv5 upload
+	play -q sound.mp3
 
 clean:
 	@echo Cleaning project
