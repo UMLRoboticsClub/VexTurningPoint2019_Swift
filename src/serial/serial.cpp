@@ -1,5 +1,5 @@
 //#define DEBUG
-#define CRCOFF
+//#define CRCOFF
 
 #include <iostream>
 #include <string>
@@ -56,19 +56,11 @@ void parseInput(const char *buf, vector<Point> &targets){
         }
     }
 
-
-
-
-//TODO:sometimes crc fails for no reason wtf
-
-    
-
-
 #ifdef DEBUG
     cout << "packet header ok" << endl;
 #endif
 
-    while(isspace(buf[pktIndex + 1])) ++pktIndex; //skip spaces
+    //while(isspace(buf[pktIndex + 1])) ++pktIndex; //skip spaces
 
     char *end;
     const char *afterHeader = buf + pktIndex - 1;
@@ -91,17 +83,19 @@ void parseInput(const char *buf, vector<Point> &targets){
 
 #ifdef DEBUG
     for(int i = 0; i < dataLen; ++i){
-        cout << *(dataStart + i);
+        cout << '[' << *(dataStart + i) << ']';
     }
     cout << endl;
 #endif
 
 #ifndef CRCOFF
-    uint32_t repcrc = strtol(end, &end, 10);
+
+    //need to use unsigned long ver of strtol
+    uint32_t repcrc = strtoul(end, NULL, 10);
     uint32_t gencrc = crc32buf(dataStart, dataLen);
 
 #ifdef DEBUG
-    cout << "reported crc: " << repcrc << endl;
+    cout << "reported crc:  " << repcrc << endl;
     cout << "generated crc: " << gencrc << endl;
 #endif
 

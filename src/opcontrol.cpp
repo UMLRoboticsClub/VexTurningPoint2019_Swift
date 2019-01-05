@@ -40,6 +40,7 @@ void drawRect(int x, int y, int w, int h, lv_color_t color){
     lv_draw_rect(&coords, &coords, &lv_style_plain);
 }
 
+//TODO: change this later
 const int vid_w = 800;
 const int vid_h = 488;
 
@@ -58,7 +59,7 @@ void processPoints(vector<Point> &targets){
     clearScreen();
 
     //draw middle line
-    drawRect(488/2, 0, 1, LV_VER_RES, LV_COLOR_GREEN);
+    drawRect(vid_h/2, 0, 1, LV_VER_RES, LV_COLOR_GREEN);
 
     for(auto &a : targets){
         cout << "point:" << '[' << a.second << "," << a.first << ']' << endl;
@@ -75,12 +76,8 @@ void opcontrol() {
     framebuffer = lv_vdb_get();
 
     setVisionCallback(processPoints);
-
     Task ser_read(readAndParseVisionData);
-
     Task heartbeat(serialHeartbeat);
-
-    //asm("nop");
 
     while(1){ delay(1000); }
 }
