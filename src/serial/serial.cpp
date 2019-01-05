@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <atomic>
 
 #include <cstdio>
 #include <cstring>
@@ -24,9 +25,27 @@ using std::vector;
 const char *header = "zz ";
 const int HEARTBEAT_INTV = 1000; //ms
 
-void (*doThing)(vector<Point>&);
+vector<Point> targetscopy;
+
+pros::Mutex mutex;
+
+std::atomic<bool> newPacket = false;
+
+class lock_guard {
+    public:
+        lock_guard(pros::Mutex &mutex):
+            _mutex(mutex){
+                _mutex.take(TIMEOUT_MAX);
+            }
+        ~lock_guard(){
+            _mutex.give();
+        }
+    private:
+        pros::Mutex &_mutex;
+};
 
 void parseInput(const char *buf, vector<Point> &targets){
+    targets.clear();
     int len = strlen(buf);
 #ifdef DEBUG
     cout << "input: [" << buf << "]" << endl;
@@ -121,10 +140,6 @@ void parseInput(const char *buf, vector<Point> &targets){
     fflush(stdout);
 }
 
-void setVisionCallback(void (*callback)(vector<Point>&)){
-    doThing = callback;
-}
-
 void readAndParseVisionData(void*){
     const int headerLen = strlen(header);
     vector<Point> targets;
@@ -146,10 +161,20 @@ void readAndParseVisionData(void*){
         cout << "header exists" << endl;
 #endif
 
-        targets.clear();
         parseInput(buf, targets);
-        doThing(targets);
+
+        lock_guard lock(mutex);
+        targetscopy.swap(targets);
+        newPacket = true;
     }
+}
+
+void getTargets(std::vector<Point> &targets){
+    while(!newPacket){ delay(5); }
+    newPacket = false;
+
+    lock_guard lock(mutex);
+    targets.swap(targetscopy);
 }
 
 void serialHeartbeat(void*){
