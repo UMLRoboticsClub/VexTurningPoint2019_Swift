@@ -1,5 +1,5 @@
 //#define DEBUG
-#define CRCOFF
+//#define CRCOFF
 
 #include <iostream>
 #include <string>
@@ -22,6 +22,7 @@ using std::string;
 using std::vector;
 
 const char *header = "zz ";
+const int HEARTBEAT_INTV = 1000; //ms
 
 void (*doThing)(vector<Point>&);
 
@@ -55,19 +56,11 @@ void parseInput(const char *buf, vector<Point> &targets){
         }
     }
 
-
-
-
-//TODO:sometimes crc fails for no reason wtf
-
-    
-
-
 #ifdef DEBUG
     cout << "packet header ok" << endl;
 #endif
 
-    while(isspace(buf[pktIndex + 1])) ++pktIndex; //skip spaces
+    //while(isspace(buf[pktIndex + 1])) ++pktIndex; //skip spaces
 
     char *end;
     const char *afterHeader = buf + pktIndex - 1;
@@ -90,17 +83,19 @@ void parseInput(const char *buf, vector<Point> &targets){
 
 #ifdef DEBUG
     for(int i = 0; i < dataLen; ++i){
-        cout << *(dataStart + i);
+        cout << '[' << *(dataStart + i) << ']';
     }
     cout << endl;
 #endif
 
 #ifndef CRCOFF
-    uint32_t repcrc = strtol(end, &end, 10);
+
+    //need to use unsigned long ver of strtol
+    uint32_t repcrc = strtoul(end, NULL, 10);
     uint32_t gencrc = crc32buf(dataStart, dataLen);
 
 #ifdef DEBUG
-    cout << "reported crc: " << repcrc << endl;
+    cout << "reported crc:  " << repcrc << endl;
     cout << "generated crc: " << gencrc << endl;
 #endif
 
@@ -131,14 +126,14 @@ void setVisionCallback(void (*callback)(vector<Point>&)){
 }
 
 void readAndParseVisionData(void*){
-    int headerLen = strlen(header);
+    const int headerLen = strlen(header);
     vector<Point> targets;
-    char buf[128];
 
-    size_t size = 128;
+    const int BUF_SIZE = 128;
+    char buf[BUF_SIZE];
 
     while(true){
-        cin.getline(buf, 128);
+        cin.getline(buf, BUF_SIZE);
 
         //skip if header doesn't exist
         if(strncmp(buf, header, headerLen) != 0){
@@ -154,5 +149,15 @@ void readAndParseVisionData(void*){
         targets.clear();
         parseInput(buf, targets);
         doThing(targets);
+    }
+}
+
+void serialHeartbeat(void*){
+    using namespace pros;
+
+    uint32_t now = millis();
+    while(true){
+        cout << endl;
+        Task::delay_until(&now, HEARTBEAT_INTV);
     }
 }
