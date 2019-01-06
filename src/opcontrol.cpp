@@ -24,7 +24,7 @@
 #include <algorithm>
 
 #include "pros/apix.h"
-#include "okapi/api.hpp"
+//#include "okapi/api.hpp"
 
 #include "serial/serial.h"
 
@@ -40,11 +40,6 @@ lv_vdb_t *framebuffer;
 const int vid_w = 800;
 const int vid_h = 488;
 
-
-//const int DRIVE_MOTOR_LEFT = 1;
-//const int DRIVE_MOTOR_RIGHT = 2;
-//auto chassis = okapi::ChassisControllerFactory::create(DRIVE_MOTOR_LEFT, DRIVE_MOTOR_RIGHT);
-
 pros::Motor left_mtr(1);
 pros::Motor right_mtr(2);
 
@@ -58,6 +53,7 @@ void drawRect(int x, int y, int w, int h, lv_color_t color){
 }
 
 void clearScreen(){
+    //is this safe? who knows
     memset(framebuffer->buf, 0, LV_HOR_RES * LV_VER_RES * sizeof(lv_color_t));
 }
 
