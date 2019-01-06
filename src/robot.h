@@ -25,5 +25,4 @@ class Robot {
         Motor turretMotor;
         Motor intakeMotor;
         Motor transferMotor;
-
 };
