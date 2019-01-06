@@ -2,8 +2,6 @@
 
 #include "okapi/api.hpp"
 
-using namespace okapi;
-
 class Robot {
     public:
         Robot();
@@ -19,10 +17,10 @@ class Robot {
         void runTransfer(int direction);
 
     private:
-        ChassisControllerIntegrated chassis;
-        Motor hoodMotor;
-        Motor flywheelMotor;
-        Motor turretMotor;
-        Motor intakeMotor;
-        Motor transferMotor;
+        okapi::ChassisControllerIntegrated chassis;
+        okapi::Motor hoodMotor;
+        okapi::Motor flywheelMotor;
+        okapi::Motor turretMotor;
+        okapi::Motor intakeMotor;
+        okapi::Motor transferMotor;
 };

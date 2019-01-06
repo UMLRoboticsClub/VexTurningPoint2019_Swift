@@ -20,24 +20,21 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <utility>
 #include <algorithm>
 
 #include "pros/apix.h"
-//#include "okapi/api.hpp"
 
 #include "serial.h"
 #include "graphics.h"
 #include "utility.h"
+#include "globals.h"
+#include "robot.h"
 
 using std::cout;
 using std::endl;
 using std::cin;
 using std::vector;
 using std::string;
-
-pros::Motor left_mtr(1);
-pros::Motor right_mtr(2);
 
 const vector<Point>::iterator findOptimalTarget(vector<Point> &targets){
     //highest target
@@ -56,7 +53,7 @@ const vector<Point>::iterator findOptimalTarget(vector<Point> &targets){
 void processPoints(vector<Point> &targets){
 
     //const auto target = findOptimalTarget(targets);
-    //int dist = target->first - vid_w/2;
+    //int dist = target->first - Gfx::vid_w/2;
 
     //cout << "dist: " << dist << endl;
 
@@ -74,15 +71,14 @@ void processPoints(vector<Point> &targets){
     //}
 
 #ifdef DRAW
-    Graphics::clearScreen();
+    Gfx::clearScreen();
 
     //draw middle line
-    Graphics::drawRect(vid_h/2, 0, 1, LV_VER_RES, LV_COLOR_GREEN);
+    Gfx::drawRect(Gfx::vid_h/2, 0, 1, LV_VER_RES, LV_COLOR_GREEN);
 
     for(auto &a : targets){
-        Graphics::drawTarget(a);
+        Gfx::drawTarget(a);
     }
-
 
     lv_vdb_flush();
 #endif
@@ -96,10 +92,7 @@ void processPoints(vector<Point> &targets){
 }
 
 void opcontrol() {
-    puts("starting...\n");
-
-    Serial::initialize();
-    Graphics::initialize();
+    Robot robot;
 
     vector<Point> targets;
     while(1){ 

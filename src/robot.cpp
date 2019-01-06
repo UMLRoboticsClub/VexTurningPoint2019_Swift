@@ -1,5 +1,10 @@
 #include "robot.h"
 
+#include "serial.h"
+#include "graphics.h"
+
+using namespace okapi;
+
 const static int MOTOR_L_A = 0;
 const static int MOTOR_L_B = 1;
 const static int MOTOR_L_C = 2;
@@ -29,6 +34,8 @@ Robot::Robot():
     intakeMotor(MOTOR_INTAKE),
     transferMotor(MOTOR_TRANSFER)
 {
+    Serial::initialize();
+    Gfx::initialize();
     zero();
 }
 
@@ -57,10 +64,10 @@ int Robot::ballsLoaded(){
     return 0;
 }
 
-void runIntake(int direction){
+void Robot::runIntake(int direction){
     //1 intakes, -1 outtakes.
 }
 
-void runTransfer(int direction){
+void Robot::runTransfer(int direction){
     //see runIntake.
 }

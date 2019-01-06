@@ -2,7 +2,11 @@
 
 #include "globals.h"
 
-namespace Graphics {
+namespace Gfx {
+    //TODO: change this later
+    const int vid_w = 800;
+    const int vid_h = 488;
+
     static lv_vdb_t *framebuffer;
 
     void initialize(){

@@ -9,12 +9,12 @@
 
 #include <cstdio>
 #include <cstring>
-#include <climits>
 
 #include "pros/apix.h"
 
 #include "crc.h"
 #include "serial.h"
+#include "globals.h"
 
 using std::cin;
 using std::cout;
@@ -22,17 +22,17 @@ using std::endl;
 using std::string;
 using std::vector;
 
-static const char *header = "zz ";
-static const int HEARTBEAT_INTV = 1000; //ms
-
-//task-safe copy of targets after all have been parsed
-static vector<Point> targetscopy;
-//prevent accessing targets while swapping
-static pros::Mutex mutex;
-//used to check if new data has been received
-static std::atomic<bool> newPacket = false;
-
 namespace Serial {
+
+    static const char *header = "zz ";
+    static const int HEARTBEAT_INTV = 1000; //ms
+
+    //task-safe copy of targets after all have been parsed
+    static vector<Point> targetscopy;
+    //prevent accessing targets while swapping
+    static pros::Mutex mutex;
+    //used to check if new data has been received
+    static std::atomic<bool> newPacket = false;
 
     //private
     void parseInput(std::string &input, std::vector<Point> &targets);
