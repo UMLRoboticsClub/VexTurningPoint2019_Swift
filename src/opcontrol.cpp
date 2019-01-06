@@ -92,8 +92,6 @@ void processPoints(vector<Point> &targets){
 }
 
 void opcontrol() {
-    Robot robot;
-
     vector<Point> targets;
     while(1){ 
         Serial::getTargets(targets);
