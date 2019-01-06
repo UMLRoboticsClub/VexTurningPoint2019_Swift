@@ -74,7 +74,7 @@ const vector<Point>::iterator findOptimalTarget(vector<Point> &targets){
             [](const Point &a, const Point &b){ return a.second < b.second; });
 
     //vector<Point>::iterator min = targets.begin();
-    //for(auto it = targets.begin(); it != targets.end(); ++it){
+    //for(auto it = targets.begin() + 1; it != targets.end(); ++it){
     //    if(it->second < min->second){
     //        min = it;
     //    }
@@ -84,29 +84,23 @@ const vector<Point>::iterator findOptimalTarget(vector<Point> &targets){
 
 void processPoints(vector<Point> &targets){
 
-    const auto target = findOptimalTarget(targets);
-    int dist = target->first - vid_w/2;
+    //const auto target = findOptimalTarget(targets);
+    //int dist = target->first - vid_w/2;
 
-    cout << "dist: " << dist << endl;
+    //cout << "dist: " << dist << endl;
 
-    if(dist > 5){
-        left_mtr  = 10;
-        right_mtr = 10;
-    } else if(dist < -5){
-        left_mtr  = -10;
-        right_mtr = -10;
-    }
+    //int speed = 10 + abs(dist/20);
 
-    //int speed = dist/100;
-
-    //if(dist > 5){
-    //    left_mtr  = dist;
-    //    right_mtr = dist;
-    //} else if(dist < -5){
-    //    left_mtr  = -dist;
-    //    right_mtr = -dist;
+    //if(dist > 10){
+    //    left_mtr  = speed;
+    //    right_mtr = speed;
+    //} else if(dist < -10){
+    //    left_mtr  = -speed;
+    //    right_mtr = -speed;
+    //} else {
+    //    left_mtr  = 0;
+    //    right_mtr = 0;
     //}
-
 
 #ifdef DRAW
     clearScreen();
