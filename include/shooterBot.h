@@ -4,27 +4,33 @@
 
 class ShooterBot{
 public:
-	ShooterBot();
-	~ShooterBot();
-	void zero();
-	void findTarget();//this might not be necessary, figure out our tracking
-	void aimTurret(double angle);
-	void aimHood(double angle);
-	void shoot(double angle);
-	int ballsLoaded();
-	void runIntake(int direction);
-	void runTransfer(int direction);
-	
-	
-	okapi::ChassisControllerIntegrated chassis;
-	okapi::Motor hoodMotor;
-	okapi::Motor flyWheelMotor;
-	okapi::Motor turretMotor;
-	okapi::Motor intakeMotor;
-	okapi::Motor transferMotor;
-	double hoodAngle;
-	double turretAngle;
-	//sensor ballSensor	
+	ShooterBot() = delete;
+	~ShooterBot() = delete;
+	static void init();
+	static void zero();
+	static void findTarget();//this might not be necessary, figure out our tracking
+	static void aimTurret(double angle);
+	static void aimHood(double angle);
+	static void shoot(double angle);
+	static int ballsLoaded();
+	static void runIntake(int direction);
+	static void runTransfer(int direction);
+
+
+	static okapi::ChassisControllerIntegrated chassis;
+	static okapi::Motor hoodMotor;
+	static okapi::Motor flyWheelMotor;
+	static okapi::Motor turretMotor;
+	static okapi::Motor intakeMotor;
+	static okapi::Motor transferMotor;
+	static double hoodAngle;
+	static double turretAngle;
+	//sensor ballSensor
+
+	static okapi::ADIButton ShooterBot::hoodLimitSwitch;
+	static okapi::ADIButton ShooterBot::turretLmitSwitch;
+	static okapi::ADIButton ShooterBot::transferLimitSwitchLower;
+	static okapi::ADIButton ShooterBot::transferLimitSwitchUpper;
 
 
 };
