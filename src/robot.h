@@ -7,7 +7,7 @@ class Robot {
         Robot();
         //~Robot();
 
-        void zero();
+        void zeroTurret();
         void findTarget();
         void aimTurret(double angle);
         void aimHood(double angle);

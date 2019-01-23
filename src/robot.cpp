@@ -36,10 +36,10 @@ Robot::Robot():
 {
     Serial::initialize();
     Gfx::initialize();
-    zero();
+    zeroTurret();
 }
 
-void Robot::zero(){
+void Robot::zeroTurret(){
     //zero hood and turret angle by going until limit.
 }
 

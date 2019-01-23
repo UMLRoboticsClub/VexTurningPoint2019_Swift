@@ -54,9 +54,9 @@ void processPoints(vector<Point> &targets){
 
     //const auto target = findOptimalTarget(targets);
     //int dist = target->first - Gfx::vid_w/2;
-
     //cout << "dist: " << dist << endl;
 
+    //demo for centering on target
     //int speed = 10 + abs(dist/20);
 
     //if(dist > 10){
