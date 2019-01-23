@@ -1,5 +1,4 @@
 #include "main.h"
-
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -28,7 +27,7 @@
 #include "graphics.h"
 #include "utility.h"
 #include "globals.h"
-#include "robot.h"
+#include "shooterBot.h"
 
 using std::cout;
 using std::endl;
@@ -38,7 +37,7 @@ using std::string;
 
 const vector<Point>::iterator findOptimalTarget(vector<Point> &targets){
     //highest target
-    return std::min_element(targets.begin(), targets.end(), 
+    return std::min_element(targets.begin(), targets.end(),
             [](const Point &a, const Point &b){ return a.second < b.second; });
 
     //vector<Point>::iterator min = targets.begin();
@@ -93,9 +92,14 @@ void processPoints(vector<Point> &targets){
 
 void opcontrol() {
     vector<Point> targets;
-    while(1){ 
+    while(1){
         Serial::getTargets(targets);
         if(targets.size() == 0) continue;
         processPoints(targets);
     }
+
+	//actual robot input to driving
+	
+
+
 }

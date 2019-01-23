@@ -27,10 +27,10 @@ public:
 	static double turretAngle;
 	//sensor ballSensor
 
-	static okapi::ADIButton ShooterBot::hoodLimitSwitch;
-	static okapi::ADIButton ShooterBot::turretLmitSwitch;
-	static okapi::ADIButton ShooterBot::transferLimitSwitchLower;
-	static okapi::ADIButton ShooterBot::transferLimitSwitchUpper;
+	static okapi::ADIButton hoodLimitSwitch;
+	static okapi::ADIButton turretLimitSwitch;
+	static okapi::ADIButton transferLimitSwitchLower;
+	static okapi::ADIButton transferLimitSwitchUpper;
 
 
 };

@@ -1,6 +1,12 @@
 #include "shooterBot.h"
 
-//define class variables
+static double hoodGearing;
+static double turretGearing;
+static double flyWheelGearing;
+static double intakeGearing;
+static double transferGearing;
+
+
 	//position vars
 	double ShooterBot::hoodAngle = 0;
 	double ShooterBot::turretAngle = 0;
@@ -21,7 +27,7 @@
 	okapi::Motor ShooterBot::transferMotor(10);
 
 	okapi::ADIButton ShooterBot::hoodLimitSwitch(11);
-	okapi::ADIButton ShooterBot::turretLmitSwitch(12);
+	okapi::ADIButton ShooterBot::turretLimitSwitch(12);
 	okapi::ADIButton ShooterBot::transferLimitSwitchLower(13);
 	okapi::ADIButton ShooterBot::transferLimitSwitchUpper(14);
 
@@ -35,11 +41,11 @@ void ShooterBot::zero(){
 	while(!ShooterBot::hoodLimitSwitch.isPressed()){
 		ShooterBot::hoodMotor.moveVelocity(10);
 	}
-	ShooterBot::hoodMotor.setZeroPosition();
+	ShooterBot::hoodMotor.tarePosition();
 	while(!ShooterBot::turretLimitSwitch.isPressed()){
 		ShooterBot::turretMotor.moveVelocity(10);
 	}
-	ShooterBot::turretMotor.setZeroPosition();
+	ShooterBot::turretMotor.tarePosition();
 }
 
 void ShooterBot::findTarget(){
@@ -48,20 +54,31 @@ void ShooterBot::findTarget(){
 
 void ShooterBot::aimTurret(double angle){
 	//move turret to given angle measured relative to robot main axis
-	ShooterBot::turretMotor.moveAbsolute(/*math here*/);
+	//internal gearing,
+	//gearing to turret gear
+	//number of ticks on encoder - takes into account internal gearing, be careful
+	ShooterBot::turretMotor.moveAbsolute(0, 0);
 }
 
 void ShooterBot::aimHood(double angle){
 	//move hood to specified angle
-	ShooterBot::hoodMotor.moveAbsolute(/*doSometMath*/);
+	//internal gearing, ticks per rotation
+	//gearing to hood outer gearing
+	ShooterBot::hoodMotor.moveAbsolute(0, 0);
 }
 
 void ShooterBot::shoot(double angle){
 	//runs transfer until ball has exited the robot
-	bool twoBalls = ShooterBot::transerLimitSwitchLower.isPressed()
+	bool twoBalls = ShooterBot::transferLimitSwitchLower.isPressed();
 	//this will be a little tricky timeing wise.  Theoretically just run until
 	//top trigger no longer pressed, then reverse so bottom one is pressed?
 	//but only the latter if it was initially pressed
+
+	//run transfer until top button is no longer pressed
+	//continue running for empirically determined time so ball leaves
+
+	//if twoBalls, run reverse so ball is back at bottom of transfer
+
 }
 
 int ShooterBot::ballsLoaded(){
