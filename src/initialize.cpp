@@ -1,5 +1,12 @@
 #include "main.h"
+
+#include <cstdio>
+
 #include "pros/apix.h"
+
+#include "globals.h"
+
+static const int ADI_COLOR_SWITCH = 1;
 
 //runs before initialize
 class PreConfig {
@@ -14,13 +21,29 @@ class PreConfig {
         }
 } conf;
 
+void registerColor(){
+    using namespace pros::c;
+
+    adi_port_set_config(ADI_COLOR_SWITCH, E_ADI_DIGITAL_IN);
+
+    if(adi_digital_read(ADI_COLOR_SWITCH)){
+        TEAM_COLOR = RED; 
+        LV_TEAM_COLOR = LV_COLOR_RED; 
+        puts("Registered as RED");
+        return;
+    }
+    puts("Registered as BLUE");
+}
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {}
+void initialize(){
+    registerColor();
+}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
