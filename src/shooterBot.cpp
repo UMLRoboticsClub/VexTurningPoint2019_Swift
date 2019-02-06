@@ -90,10 +90,20 @@ int ShooterBot::ballsLoaded(){
 		count++;
 }
 
-void runIntake(int direction){
+void ShooterBot::runIntake(int direction){
 	ShooterBot::intakeMotor.moveVelocity(direction*100);
 }
 
-void runTransfer(int direction){
+void ShooterBot::runTransfer(int direction){
 	ShooterBot::transferMotor.moveVelocity(direction*100);
+}
+
+//val is in [-1,  1]
+void ShooterBot::turretManual(double val){
+
+}
+
+//val is in [-1, 1]
+void ShooterBot::hoodManual(double val){
+
 }
