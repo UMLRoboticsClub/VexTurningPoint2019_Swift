@@ -15,6 +15,8 @@ public:
 	static int ballsLoaded();
 	static void runIntake(int direction);
 	static void runTransfer(int direction);
+    static void turretManual(double val);
+    static void hoodManual(double val);
 
 
 	static okapi::ChassisControllerIntegrated chassis;

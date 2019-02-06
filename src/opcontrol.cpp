@@ -28,6 +28,7 @@
 #include "utility.h"
 #include "globals.h"
 #include "shooterBot.h"
+#include "defines.h"
 
 using std::cout;
 using std::endl;
@@ -92,14 +93,42 @@ void processPoints(vector<Point> &targets){
 
 void opcontrol() {
     vector<Point> targets;
+	okapi::Controller controller;
     while(1){
         Serial::getTargets(targets);
         if(targets.size() == 0) continue;
         processPoints(targets);
+
+		//actual robot input
+		//determine motion required based on left joystick
+		ShooterBot::chassis.driveVector(controller.getAnalog(DRIVETRAIN_MAIN), controller.getAnalog(DRIVETRAIN_TURN));
+
+		if(!controller.getDigital(FIND_TARGET)){
+			ShooterBot::turretManual(controller.getAnalog(TURRET_CONTROL));
+			ShooterBot::hoodManual(controller.getAnalog(HOOD_CONTROL));
+		}
+
+		if(controller.getDigital(INTAKE_IN)){
+			ShooterBot::runIntake(1);
+		}
+		else if(controller.getDigital(INTAKE_PUKE)){
+			ShooterBot::runIntake(-1);
+		}
+
+		if(controller.getDigital(TRANSFER_IN)){
+			ShooterBot::runTransfer(1);
+		}
+		else if(controller.getDigital(TRANSFER_OUT)){
+			ShooterBot::runTransfer(-1);
+		}
+
+		//handle target swapping however we decide to do that.
+
+		//maybe not have the estop be such a simple easily accessible button
+		//or just have estop set all motors to stop
+
+		//zero should be run onChange
+		//so that needs to be registerd as an individual button.
+
     }
-
-	//actual robot input to driving
-	
-
-
 }
