@@ -28,11 +28,7 @@
 #include "utility.h"
 #include "globals.h"
 #include "shooterBot.h"
-<<<<<<< Updated upstream
-=======
 #include "defines.h"
-
->>>>>>> Stashed changes
 
 using std::cout;
 using std::endl;
@@ -97,7 +93,7 @@ void processPoints(vector<Point> &targets){
 
 void opcontrol() {
     vector<Point> targets;
-	okapi::Controller controller
+	okapi::Controller controller;
     while(1){
         Serial::getTargets(targets);
         if(targets.size() == 0) continue;
@@ -105,17 +101,17 @@ void opcontrol() {
 
 		//actual robot input
 		//determine motion required based on left joystick
-		ShooterBot::chassis.driveVector(controller.getAnalog(DRIVE_TRAIN_MAIN), controller.getAnalog(DRIVE_TRAIN_TURN));
+		ShooterBot::chassis.driveVector(controller.getAnalog(DRIVETRAIN_MAIN), controller.getAnalog(DRIVETRAIN_TURN));
 
 		if(!controller.getDigital(FIND_TARGET)){
 			ShooterBot::turretManual(controller.getAnalog(TURRET_CONTROL));
 			ShooterBot::hoodManual(controller.getAnalog(HOOD_CONTROL));
 		}
 
-		if(controller.getDigitial(INTAKE_IN)){
+		if(controller.getDigital(INTAKE_IN)){
 			ShooterBot::runIntake(1);
 		}
-		else if(controller.getDigital(INTAKE_OUT)){
+		else if(controller.getDigital(INTAKE_PUKE)){
 			ShooterBot::runIntake(-1);
 		}
 
@@ -123,7 +119,7 @@ void opcontrol() {
 			ShooterBot::runTransfer(1);
 		}
 		else if(controller.getDigital(TRANSFER_OUT)){
-			ShooterBot::runTransfer(controller.getDigital(-1));
+			ShooterBot::runTransfer(-1);
 		}
 
 		//handle target swapping however we decide to do that.
